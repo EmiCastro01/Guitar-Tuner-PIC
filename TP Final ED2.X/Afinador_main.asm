@@ -5,4 +5,53 @@ LIST P = 16F887
 
     __CONFIG _CONFIG2, _BOR4V_BOR40V & _WRT_OFF
 
+    
+    CONTA  EQU	0x21
+    ORG 0x00
+    GOTO INICIO
+    ORG	0X04
+    GOTO INT
+    
+INICIO
 
+    BANKSEL PORTB
+    MOVLW   0x08
+    MOVWF   CONTA
+    
+    BANKSEL TRISB
+    CLRF TRISB
+    
+    BANKSEL TMR0
+    MOVLW   0xE0
+    MOVWF   INTCON
+    MOVLW   .61
+    MOVWF   TMR0
+    
+    BANKSEL OPTION_REG
+    MOVLW   0x07
+    MOVWF   OPTION_REG
+    
+    BANKSEL PORTB
+    MOVLW   0x80
+    MOVWF   PORTB
+    GOTO LOOP
+    
+LOOP
+    NOP
+    GOTO LOOP
+    
+    
+INT
+    DECFSZ  CONTA
+    RETFIE
+    CALL CAMBIAR_LED
+    MOVWF   PORTB
+    BCF	INTCON, 2
+    RETFIE
+    
+    
+CAMBIAR_LED
+    BTFSC   PORTB,7
+    RETLW   0x00
+    RETLW   0x80
+    END
