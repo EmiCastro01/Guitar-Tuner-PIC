@@ -1,5 +1,5 @@
 import tkinter as tk
-
+#import serial
 root = tk.Tk()
 root.title("Afinador de guitarra")
 
