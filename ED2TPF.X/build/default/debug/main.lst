@@ -1,4 +1,4 @@
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  1
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -22,96 +22,112 @@ Warning[205]: Found directive in column 1. (LIST)
                             OREN_ON & _IESO_ON & _FCMEN_ON & _LVP_ON
 2008   3FFF           00005     __CONFIG _CONFIG2, _BOR4V_BOR40V & _WRT_OFF
                       00006 
+Warning[207]: Found label after column 1. (FREQ)
+  00000022            00007     FREQ EQU 0X22
 Warning[207]: Found label after column 1. (CONTA)
-  00000021            00007     CONTA   EQU 0X21
+  00000021            00008     CONTA   EQU 0X21
 Warning[207]: Found label after column 1. (AUX)
-  00000020            00008     AUX EQU 0X20
-                      00009     ORG 0x00
-0000   2???           00010     GOTO INICIO
-                      00011     ORG 0x04
-0004   2???           00012     GOTO INT
-                      00013     
-0005                  00014 INICIO
-0005   3002           00015     MOVLW   0X02
-0006   00A1           00016     MOVWF   CONTA
-0007   01A0           00017     CLRF    AUX
-0008   1683 1303      00018     BANKSEL TRISB
+  00000020            00009     AUX EQU 0X20
+                      00010     ORG 0x00
+0000   2???           00011     GOTO INICIO
+                      00012     ORG 0x04
+0004   2???           00013     GOTO INT
+                      00014     
+0005                  00015 INICIO
+0005   01A2           00016     CLRF FREQ
+0006   3002           00017     MOVLW   0X02
+0007   00A1           00018     MOVWF   CONTA
+0008   01A0           00019     CLRF    AUX
+0009   1683 1303      00020     BANKSEL TRISB
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-000A   0186           00019     CLRF    TRISB
-000B   1283 1303      00020     BANKSEL PORTB
-000D   0186           00021     CLRF PORTB
-                      00022     
-000E   1683 1303      00023     BANKSEL OPTION_REG
-0010   3030           00024     MOVLW   b'00110000'
+000B   0186           00021     CLRF    TRISB
+000C   1283 1303      00022     BANKSEL PORTB
+000E   0186           00023     CLRF PORTB
+                      00024     
+000F   1683 1303      00025     BANKSEL OPTION_REG
+0011   3030           00026     MOVLW   b'00110000'
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0011   0081           00025     MOVWF   OPTION_REG
-                      00026     
-0012   1283 1303      00027     BANKSEL TMR0
-0014   3000           00028     MOVLW   0x00
-0015   0081           00029     MOVWF   TMR0
-                      00030     
-0016   1283 1303      00031     BANKSEL TMR1H
-0018   3000           00032     MOVLW   0x00
-0019   008F           00033     MOVWF   TMR1H
-001A   3000           00034     MOVLW   0x00
-001B   008E           00035     MOVWF   TMR1L
-                      00036     
-001C   1283 1303      00037     BANKSEL T1CON
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  2
+0012   0081           00027     MOVWF   OPTION_REG
+                      00028     
+0013   1283 1303      00029     BANKSEL TMR0
+0015   3000           00030     MOVLW   0x00
+0016   0081           00031     MOVWF   TMR0
+                      00032     
+0017   1283 1303      00033     BANKSEL TMR1H
+0019   3000           00034     MOVLW   0x00
+001A   008F           00035     MOVWF   TMR1H
+001B   3000           00036     MOVLW   0x00
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-001E   3031           00038     MOVLW   b'00110001'
-001F   0090           00039     MOVWF   T1CON
-                      00040     
-0020   1683 1303      00041     BANKSEL PIE1
+001C   008E           00037     MOVWF   TMR1L
+                      00038     
+001D   1283 1303      00039     BANKSEL T1CON
+001F   3031           00040     MOVLW   b'00110001'
+0020   0090           00041     MOVWF   T1CON
+                      00042     
+0021   1683 1303      00043     BANKSEL PIE1
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0022   140C           00042     BSF PIE1, 0
-                      00043     
-0023   30C0           00044     MOVLW   b'11000000'
-0024   008B           00045     MOVWF   INTCON
-                      00046     
-0025   2???           00047     GOTO MAIN
-0026                  00048 MAIN
-0026   1283 1303      00049     BANKSEL PORTA
-0028   0820           00050     MOVF    AUX, 0
-0029   0086           00051     MOVWF   PORTB
-002A   2???           00052     GOTO MAIN
-                      00053 
-002B                  00054 SEG
+0023   140C           00044     BSF PIE1, 0
+                      00045     
+0024   30C0           00046     MOVLW   b'11000000'
+0025   008B           00047     MOVWF   INTCON
+                      00048     
+0026   2???           00049     GOTO MAIN
+0027                  00050 MAIN
+                      00051     
+0027   0822           00052     MOVF    FREQ, 0
+0028   1283 1303      00053     BANKSEL PORTB
+002A   0086           00054     MOVWF   PORTB
                       00055     
                       00056     
-002B   1283 1303      00057     BANKSEL TMR1H
-002D   3000           00058     MOVLW   0x00
-002E   008F           00059     MOVWF   TMR1H
-002F   3000           00060     MOVLW   0x00
-0030   008E           00061     MOVWF   TMR1L
-0031   1283 1303      00062     BANKSEL PORTA
+002B   2???           00057     GOTO MAIN
+                      00058 
+002C                  00059 SEG
+                      00060     
+                      00061     
+002C   1283 1303      00062     BANKSEL TMR1H
+002E   3000           00063     MOVLW   0x00
+002F   008F           00064     MOVWF   TMR1H
+0030   3000           00065     MOVLW   0x00
+0031   008E           00066     MOVWF   TMR1L
+0032   1283 1303      00067     BANKSEL PORTA
 Message[305]: Using default destination of 1 (file).
-0033   0BA1           00063     DECFSZ  CONTA
-0034   0008           00064     RETURN
-0035   0AA0           00065     INCF    AUX,1
-0036   3002           00066     MOVLW   0X02
-0037   00A1           00067     MOVWF   CONTA
-                      00068     
-0038   0008           00069     RETURN
-                      00070     
-0039                  00071 INT
-0039   1283 1303      00072     BANKSEL PIR1
-003B   1C0C           00073     BTFSS    PIR1, 0
-003C   0009           00074     RETFIE 
-003D   2???           00075     CALL SEG
-                      00076    
-003E   1283 1303      00077     BANKSEL PIR1
-0040   100C           00078     BCF PIR1, 0
-0041   0009           00079     RETFIE
-                      00080  
-                      00081     
-                      00082     
-3FF7 3FFF             00083     END
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  3
+0034   0BA1           00068     DECFSZ  CONTA
+0035   0008           00069     RETURN
+0036   01A2           00070     CLRF FREQ
+0037   1283 1303      00071     BANKSEL TMR0
+0039   0801           00072     MOVF    TMR0, 0
+003A   00A2           00073     MOVWF   FREQ 
+003B   0181           00074     CLRF TMR0
+003C   3002           00075     MOVLW   0X02
+003D   00A1           00076     MOVWF   CONTA
+                      00077     
+003E   0008           00078     RETURN
+                      00079     
+003F                  00080 INT
+003F   1283 1303      00081     BANKSEL PIR1
+0041   1C0C           00082     BTFSS    PIR1, 0
+0042   0009           00083     RETFIE
+0043   2???           00084     CALL SEG
+                      00085    
+0044   1283 1303      00086     BANKSEL PIR1
+0046   100C           00087     BCF PIR1, 0
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0047   0009           00088     RETFIE
+                      00089  
+                      00090     
+                      00091     
+3FF7 3FFF             00092     END
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  4
 
 
 SYMBOL TABLE
@@ -170,7 +186,7 @@ BRG5                              00000005
 BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  4
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  5
 
 
 SYMBOL TABLE
@@ -229,7 +245,7 @@ CCPR2L                            0000001B
 CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  5
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  6
 
 
 SYMBOL TABLE
@@ -270,6 +286,7 @@ EEIF                              00000004
 EEPGD                             00000007
 F                                 00000001
 FERR                              00000002
+FREQ                              00000022
 FSR                               00000004
 FVREN                             00000000
 GCEN                              00000007
@@ -284,16 +301,16 @@ I2C_START                         00000003
 I2C_STOP                          00000004
 INDF                              00000000
 INICIO                            00000005
-INT                               00000039
+INT                               0000003F
 INTCON                            0000000B
 INTE                              00000004
-INTEDG                            00000006
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  6
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  7
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+INTEDG                            00000006
 INTF                              00000001
 IOCB                              00000096
 IOCB0                             00000000
@@ -309,7 +326,7 @@ IRCF1                             00000005
 IRCF2                             00000006
 IRP                               00000007
 LTS                               00000001
-MAIN                              00000026
+MAIN                              00000027
 MC1OUT                            00000007
 MC2OUT                            00000006
 MSK                               00000093
@@ -346,13 +363,13 @@ P                                 00000004
 P1M0                              00000006
 P1M1                              00000007
 PCL                               00000002
-PCLATH                            0000000A
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  7
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  8
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PCLATH                            0000000A
 PCON                              0000008E
 PDC0                              00000000
 PDC1                              00000001
@@ -405,13 +422,13 @@ RB6                               00000006
 RB7                               00000007
 RBIE                              00000003
 RBIF                              00000000
-RC0                               00000000
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  8
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE  9
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+RC0                               00000000
 RC1                               00000001
 RC2                               00000002
 RC3                               00000003
@@ -453,7 +470,7 @@ S                                 00000003
 SBOREN                            00000004
 SCKP                              00000004
 SCS                               00000000
-SEG                               0000002B
+SEG                               0000002C
 SEN                               00000000
 SENDB                             00000003
 SMP                               00000007
@@ -464,13 +481,13 @@ SR0                               00000006
 SR1                               00000007
 SRCON                             00000185
 SREN                              00000005
-SSPADD                            00000093
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  9
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE 10
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SSPADD                            00000093
 SSPBUF                            00000013
 SSPCON                            00000014
 SSPCON2                           00000091
@@ -523,13 +540,13 @@ TMR2                              00000011
 TMR2IE                            00000001
 TMR2IF                            00000001
 TMR2ON                            00000002
-TOUTPS0                           00000003
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE 10
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE 11
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TOUTPS0                           00000003
 TOUTPS1                           00000004
 TOUTPS2                           00000005
 TOUTPS3                           00000006
@@ -582,13 +599,13 @@ TUN3                              00000003
 TUN4                              00000004
 TX8_9                             00000006
 TX9                               00000006
-TX9D                              00000000
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE 11
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE 12
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TX9D                              00000000
 TXD8                              00000000
 TXEN                              00000005
 TXIE                              00000004
@@ -641,13 +658,13 @@ _BOREN_ON                         00003FFF
 _BOREN_SBODEN                     00003DFF
 _BOR_NSLEEP                       00003EFF
 _BOR_OFF                          00003CFF
-_BOR_ON                           00003FFF
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE 12
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE 13
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_BOR_ON                           00003FFF
 _BOR_SBODEN                       00003DFF
 _CONFIG1                          00002007
 _CONFIG2                          00002008
@@ -700,18 +717,18 @@ _WRT_256                          00003DFF
 _WRT_HALF                         000039FF
 _WRT_OFF                          00003FFF
 _XT_OSC                           00003FF9
-__16F887                          00000001
-MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE 13
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:21:35         PAGE 14
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+__16F887                          00000001
 __DEBUG                           
 __MPLAB_DEBUGGER_SIMULATOR        1
 
 Errors   :     0
-Warnings :     3 reported,     0 suppressed
+Warnings :     4 reported,     0 suppressed
 Messages :     4 reported,     0 suppressed
 
 
