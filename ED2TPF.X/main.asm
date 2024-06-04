@@ -1,0 +1,83 @@
+LIST P=16F887  
+#include "p16f887.inc"
+
+    __CONFIG _CONFIG1, _FOSC_EXTRC_CLKOUT & _WDTE_OFF & _PWRTE_OFF & _MCLRE_ON & _CP_OFF & _CPD_OFF & _BOREN_ON & _IESO_ON & _FCMEN_ON & _LVP_ON
+    __CONFIG _CONFIG2, _BOR4V_BOR40V & _WRT_OFF
+
+    CONTA   EQU	0X21
+    AUX EQU 0X20
+    ORG 0x00
+    GOTO INICIO
+    ORG 0x04
+    GOTO INT
+    
+INICIO
+    MOVLW   0X09
+    MOVWF   CONTA
+    CLRF    AUX
+    BANKSEL TRISB
+    CLRF    TRISB
+    BANKSEL PORTB
+    CLRF PORTB
+    
+    BANKSEL OPTION_REG
+    MOVLW   b'00110000'
+    MOVWF   OPTION_REG
+    
+    BANKSEL TMR0
+    MOVLW   0x00
+    MOVWF   TMR0
+    
+    BANKSEL TMR1H
+    MOVLW   0x00
+    MOVWF   TMR1H
+    MOVLW   0x00
+    MOVWF   TMR1L
+    
+    BANKSEL T1CON
+    MOVLW   b'00110001'
+    MOVWF   T1CON
+    
+    BANKSEL PIE1
+    BSF	PIE1, 0
+    
+    MOVLW   b'11000000'
+    MOVWF   INTCON
+    
+    GOTO MAIN
+MAIN
+    BANKSEL PORTA
+    MOVF    AUX, 0
+    MOVWF   PORTB
+    GOTO MAIN
+
+seg
+    
+    
+    BANKSEL TMR1H
+    MOVLW   0x00
+    MOVWF   TMR1H
+    MOVLW   0x00
+    MOVWF   TMR1L
+    BANKSEL PORTA
+    DECFSZ  CONTA
+    RETURN
+    INCF    AUX,1
+    MOVLW   0X09
+    MOVWF   CONTA
+    
+    RETURN
+    
+INT
+    BANKSEL PIR1
+    BTFSS    PIR1, 0
+    RETFIE 
+    CALL seg
+   
+    BANKSEL PIR1
+    BCF	PIR1, 0
+    RETFIE
+ 
+    
+    
+    END
