@@ -12,7 +12,7 @@ LIST P=16F887
     GOTO INT
     
 INICIO
-    MOVLW   0X09
+    MOVLW   0X02
     MOVWF   CONTA
     CLRF    AUX
     BANKSEL TRISB
@@ -51,7 +51,7 @@ MAIN
     MOVWF   PORTB
     GOTO MAIN
 
-seg
+SEG
     
     
     BANKSEL TMR1H
@@ -63,7 +63,7 @@ seg
     DECFSZ  CONTA
     RETURN
     INCF    AUX,1
-    MOVLW   0X09
+    MOVLW   0X02
     MOVWF   CONTA
     
     RETURN
@@ -72,7 +72,7 @@ INT
     BANKSEL PIR1
     BTFSS    PIR1, 0
     RETFIE 
-    CALL seg
+    CALL SEG
    
     BANKSEL PIR1
     BCF	PIR1, 0

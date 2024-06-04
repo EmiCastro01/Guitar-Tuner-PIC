@@ -1,4 +1,4 @@
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  1
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -32,7 +32,7 @@ Warning[207]: Found label after column 1. (AUX)
 0004   2???           00012     GOTO INT
                       00013     
 0005                  00014 INICIO
-0005   3009           00015     MOVLW   0X09
+0005   3002           00015     MOVLW   0X02
 0006   00A1           00016     MOVWF   CONTA
 0007   01A0           00017     CLRF    AUX
 0008   1683 1303      00018     BANKSEL TRISB
@@ -57,7 +57,7 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
 001B   008E           00035     MOVWF   TMR1L
                       00036     
 001C   1283 1303      00037     BANKSEL T1CON
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  2
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -80,7 +80,7 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
 0029   0086           00051     MOVWF   PORTB
 002A   2???           00052     GOTO MAIN
                       00053 
-002B                  00054 seg
+002B                  00054 SEG
                       00055     
                       00056     
 002B   1283 1303      00057     BANKSEL TMR1H
@@ -93,7 +93,7 @@ Message[305]: Using default destination of 1 (file).
 0033   0BA1           00063     DECFSZ  CONTA
 0034   0008           00064     RETURN
 0035   0AA0           00065     INCF    AUX,1
-0036   3009           00066     MOVLW   0X09
+0036   3002           00066     MOVLW   0X02
 0037   00A1           00067     MOVWF   CONTA
                       00068     
 0038   0008           00069     RETURN
@@ -102,7 +102,7 @@ Message[305]: Using default destination of 1 (file).
 0039   1283 1303      00072     BANKSEL PIR1
 003B   1C0C           00073     BTFSS    PIR1, 0
 003C   0009           00074     RETFIE 
-003D   2???           00075     CALL seg
+003D   2???           00075     CALL SEG
                       00076    
 003E   1283 1303      00077     BANKSEL PIR1
 0040   100C           00078     BCF PIR1, 0
@@ -111,7 +111,7 @@ Message[305]: Using default destination of 1 (file).
                       00081     
                       00082     
 3FF7 3FFF             00083     END
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  3
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  3
 
 
 SYMBOL TABLE
@@ -170,7 +170,7 @@ BRG5                              00000005
 BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  4
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  4
 
 
 SYMBOL TABLE
@@ -229,7 +229,7 @@ CCPR2L                            0000001B
 CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  5
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  5
 
 
 SYMBOL TABLE
@@ -288,7 +288,7 @@ INT                               00000039
 INTCON                            0000000B
 INTE                              00000004
 INTEDG                            00000006
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  6
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  6
 
 
 SYMBOL TABLE
@@ -347,7 +347,7 @@ P1M0                              00000006
 P1M1                              00000007
 PCL                               00000002
 PCLATH                            0000000A
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  7
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  7
 
 
 SYMBOL TABLE
@@ -406,7 +406,7 @@ RB7                               00000007
 RBIE                              00000003
 RBIF                              00000000
 RC0                               00000000
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  8
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  8
 
 
 SYMBOL TABLE
@@ -453,6 +453,7 @@ S                                 00000003
 SBOREN                            00000004
 SCKP                              00000004
 SCS                               00000000
+SEG                               0000002B
 SEN                               00000000
 SENDB                             00000003
 SMP                               00000007
@@ -464,13 +465,13 @@ SR1                               00000007
 SRCON                             00000185
 SREN                              00000005
 SSPADD                            00000093
-SSPBUF                            00000013
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE  9
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE  9
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SSPBUF                            00000013
 SSPCON                            00000014
 SSPCON2                           00000091
 SSPEN                             00000005
@@ -523,13 +524,13 @@ TMR2IE                            00000001
 TMR2IF                            00000001
 TMR2ON                            00000002
 TOUTPS0                           00000003
-TOUTPS1                           00000004
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE 10
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE 10
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TOUTPS1                           00000004
 TOUTPS2                           00000005
 TOUTPS3                           00000006
 TRISA                             00000085
@@ -582,13 +583,13 @@ TUN4                              00000004
 TX8_9                             00000006
 TX9                               00000006
 TX9D                              00000000
-TXD8                              00000000
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE 11
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE 11
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TXD8                              00000000
 TXEN                              00000005
 TXIE                              00000004
 TXIF                              00000004
@@ -641,13 +642,13 @@ _BOREN_SBODEN                     00003DFF
 _BOR_NSLEEP                       00003EFF
 _BOR_OFF                          00003CFF
 _BOR_ON                           00003FFF
-_BOR_SBODEN                       00003DFF
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE 12
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE 12
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_BOR_SBODEN                       00003DFF
 _CONFIG1                          00002007
 _CONFIG2                          00002008
 _CPD_OFF                          00003FFF
@@ -700,15 +701,14 @@ _WRT_HALF                         000039FF
 _WRT_OFF                          00003FFF
 _XT_OSC                           00003FF9
 __16F887                          00000001
-__DEBUG                           
-MPASM 5.87                          MAIN.ASM   6-4-2024  13:54:04         PAGE 13
+MPASM 5.87                          MAIN.ASM   6-4-2024  14:00:10         PAGE 13
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+__DEBUG                           
 __MPLAB_DEBUGGER_SIMULATOR        1
-seg                               0000002B
 
 Errors   :     0
 Warnings :     3 reported,     0 suppressed
