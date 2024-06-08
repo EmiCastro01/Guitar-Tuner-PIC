@@ -8,7 +8,8 @@ LIST P=16F887
     ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFINICIOINES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;-------------------------------------------------------------------------------------------
     TIMER_Z_CROSS   EQU 0x40	    ;CONTADOR PARA HACER RETARDO
-    
+    STATUS_CONTEXT  EQU 0X41	    ;PARA CONTEXTO (STATUS)
+    W_CONTEXT	    EQU	0X42	    ; PARA CONTEXTO (W)
     CONTA_Z EQU 0X24	    ;CONTADOR DE CRUCES POR CERO (SIEMPRE VALE 2: LEER CHECK_ZERO_CROSS)
     FREQ_L EQU 0x22	    ;CONTADOR DE LECTURA DE LA FRECUENCIA (NIBBLE INFERIOR)
     CONTA  EQU 0x21	    ;CONTADOR AUXILIAR PARA EL CONTEO DE 1 SEGUNDO DEL TMR1
@@ -21,12 +22,13 @@ LIST P=16F887
     DIF_FREQ_L	EQU 0x52    
     DIF_FREQ_H EQU 0x53		    ;DIFERENCIA DE AFINACIONES ENTRE COMPARE Y TUNING	
     TUNING_STATUS_REGISTER  EQU 0X54	    ;REGISTRO DEL ESTADO DE LA ACTUAL AFINACION	
-					    ;[-,-,-,H_SUB_IS_NEGATIVE,L_SUB_IS_NEGATIVE,IS_HIGHER/LOWER,IS_TUNED]
-					    ;IS_TUNED: 0 para desafinada, 1 para afinada (ambas freq iguales)
-					    ;IS_HIGHER/LOWER: 0 para higher, 1 para lower. Se refiere a la frecuencia captada por mic
-					    ;L_SUB_IS_NEGATIVE: 1 si la resta  TUNING_STR_L - FREQ_L_TO_COMPARE es < 0. 0 si no
-					    ;H_SUB_IS_NEGATIVE: idem pero con nibble superior
-					    
+					    ;[-,-,H_IS_TUNED,L_IS_TUNED,H_SUB_IS_NEGATIVE,L_SUB_IS_NEGATIVE,IS_HIGHER/LOWER,IS_TUNED]
+					    ;[0] IS_TUNED: 0 para desafinada, 1 para afinada (ambas freq iguales)
+					    ;[1] IS_HIGHER/LOWER: 1 para higher, 0 para lower. Se refiere a la frecuencia captada por mic
+					    ;[2] L_SUB_IS_NEGATIVE: 1 si la resta  TUNING_STR_L - FREQ_L_TO_COMPARE es < 0. 0 si no
+					    ;[3] H_SUB_IS_NEGATIVE: idem pero con nibble superior
+					    ;[4] L_IS_TUNED: 1 Si la resta de TUNING_STR_L - FREQ_L_TO_COMPARE = 0
+					    ;[5] H_IS_TUNED: 1 Si la resta de TUNING_STR_H - FREQ_H_TO_COMPARE = 0
     ;-------------->>>>>> FRECUENCIAS GUITARRA <H:L> <<<<<------------------------------
     CBLOCK 0X27		
     
@@ -144,51 +146,119 @@ INICIO
     MOVWF INTCON 
     
     GOTO MAIN
-;<<<<<<<<<<<<<<<<<<<<<<<<<<MAIN>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-;<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;MAIN MAIN MAIN MAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAIN
+;MAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAIN
 
 MAIN
-   
+    
+   CALL	CHECK_TUNING_STRING_SELECTED
    CALL	COMPARE
-   BANKSEL PORTB
-   MOVF	FREQ_L_TO_COMPARE, 0
-   MOVWF    PORTB
-   BANKSEL PORTD
-   MOVF	FREQ_H_TO_COMPARE, 0
-   MOVWF    PORTD
+   CALL CONVERT_TO_TUNING_METHOD
+   CALL	SHOW_RES
    GOTO MAIN
- 
-; ----------------------<<<< ETAPA DE COMPARACION >>>>>>>-------------------------------------->
+
+
+;FIN MAIN FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    
+   ;FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    
+   
+  
+;-----------------------------	CHECK_TUNING_STRING_SELECTED--------------------------------->>>>>>>>>>>>>>>>>>>>>>>
+   ;ACA HACER LA LOGICA PARA SELECCIONAR LA CUERDA A AFINAR
+CHECK_TUNING_STRING_SELECTED
+   RETURN
+   
+; _---------------------------------------------------------------------------------------------------------------
+   
+   
+; ----------------------<<<< EXPLICACION: ETAPA DE COMPARACION >>>>>>>-------------------------------------->
+   ;------- Globalmente hace la resta de 16 bits de [TUNING_STR_x - FREQ_x_TO_COMPARE] y guarda el resultado
+    ;------------------------------en DIF_FREQ_x
+    ;Existen tres posibles situaciones que se manejan con el TUNING_STATUS_REGISTER para las restas
+;-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 COMPARE
    BANKSEL PORTB
    CLRF	TUNING_STATUS_REGISTER
    MOVF	FREQ_L_TO_COMPARE, 0
    SUBWF    TUNING_STR_L, 0
+   BTFSC    STATUS, Z
+   BSF	TUNING_STATUS_REGISTER, 4
    BTFSS    STATUS, C
-   BSF	TUNING_STATUS_REGISTER, 3
+   BSF	TUNING_STATUS_REGISTER, 2
    MOVWF    DIF_FREQ_L
    
    ; comparacion de los nibbles superiores
-   BTFSC    TUNING_STATUS_REGISTER, 3
+   BTFSC    TUNING_STATUS_REGISTER, 2
    DECF	TUNING_STR_H, 1			
    MOVF	FREQ_H_TO_COMPARE, 0
    SUBWF    TUNING_STR_H, 0
+   BTFSC    STATUS, Z
+   BSF	TUNING_STATUS_REGISTER, 5
    BTFSS    STATUS, C
-   BSF	TUNING_STATUS_REGISTER, 4
+   CALL	UP_FLAGS
    MOVWF    DIF_FREQ_H
-   BTFSC    TUNING_STATUS_REGISTER, 3
-   INCF	TUNING_STR_H, 1
+   BTFSC    TUNING_STATUS_REGISTER, 2
+   INCF	TUNING_STR_H, 1			    ;ESTE METODO FUNCUIONA PERO SI JUSTO ES INTERRUMPIDO CUANDO ESTO FUIE DECREMENTANDO SE ROMPE
+   
+   BTFSC    TUNING_STATUS_REGISTER, 4
+   CALL CHECK_RES_STATUS
+   
+   BTFSC    TUNING_STATUS_REGISTER, 5
+   CALL CHECK_RES_STATUS_2
+   RETURN
+
+UP_FLAGS
+   BSF	TUNING_STATUS_REGISTER, 3
+   BSF	TUNING_STATUS_REGISTER, 1 
+   RETURN
+CHECK_RES_STATUS_2			    ;REVISA POSIBLE FRECUENCIA MEDIDA > FRECUENCIA REAL
+   BTFSC    TUNING_STATUS_REGISTER, 2
+   BSF	TUNING_STATUS_REGISTER, 1
    RETURN
    
+CHECK_RES_STATUS			    ;REVISA POSIBLE AFINACION CORRECTA
+   BTFSC    TUNING_STATUS_REGISTER, 5
+   BSF	TUNING_STATUS_REGISTER, 0
+   RETURN
+;-------------------------------------------FIN ETAPA COMPARACION--------------------------------------------------------
+     
    
-    
-;---------------------------------------------------------------------FIN ETAPA COMPARACION
-;----------------------<<<<------------------ >>>>>>>-------------------------------------->
-    
-    
-    
-    
+; ----------------------<<<< EXPLICACION: CONVERT_TO_TUINING_METHOD >>>>>>>-------------------------------------->
+  ;-------------------- Devuelve en DIF_FREQ_x la desviacion de frecuencias en cantidades iguales, para un lado
+  ; y para el otro. Por ej: luego de CONVERT_TO_TUNING_METHOD con una frecuencia
+;--------real de 330 Hz, DIF_FREQ_x = 0000 0000 0000 0001 tanto si:
+  ;------- frecuencia medida: 331Hz o 329Hz. Muestra solo la desviacion. El registro TUNING_STATUS_REGISTER
+  ;muestra para que lado es la desviacion, en su bit 1 (explicado en DEFINICIONES)
+;-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+CONVERT_TO_TUNING_METHOD
+   BTFSC    TUNING_STATUS_REGISTER, 1
+   CALL	COMP2_OPERATION
+   RETURN
+   
+COMP2_OPERATION			; complemento a dos
+   COMF DIF_FREQ_H, F
+   COMF DIF_FREQ_L, F
+   MOVF DIF_FREQ_L, W
+   ADDLW 0x01
+   MOVWF DIF_FREQ_L
+   BTFSS STATUS, C
+   RETURN
+   INCF DIF_FREQ_H, F
+   RETURN
+;---------------------------FIN CONVER_TO_TUNING_METHOD----------------------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   
+ ;-----------------------------SHOW RES->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ ; muestra resultados en puertos
+SHOW_RES
+   BANKSEL PORTB
+   MOVF	DIF_FREQ_L, 0
+   MOVWF    PORTB
+   BANKSEL PORTD
+   MOVF	DIF_FREQ_H, 0
+   MOVWF    PORTD
+   RETURN 
+  
     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: FREQ_CATCHED >>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;------- Cuando el TMR1 cumple un segundo (teniendo tambien en cuenta
     ; el contador (CONTA), se toma la frecuencia medida en los registros
@@ -264,12 +334,24 @@ END_INT_ZERO_CROSS
     
 
 INT
-    
+    ; Guardo contexto
+    MOVWF W_CONTEXT     
+    SWAPF STATUS, W  
+    CLRF STATUS_CONTEXT  
+    MOVWF STATUS_CONTEXT
+
     BANKSEL PIR1
     BTFSS PIR1, TMR1IF
     GOTO CHECK_ZERO_CROSS
     CALL FREQ_CATCHED
     BANKSEL PIR1
-    BCF PIR1, TMR1IF
-    RETFIE 
+    BCF PIR1, 0
+
+    ; pusheo contexto
+    SWAPF STATUS_CONTEXT, W 
+    MOVWF STATUS         
+    SWAPF W_CONTEXT, F      
+    SWAPF W_CONTEXT, W      
+
+    RETFIE
 END
