@@ -7,6 +7,8 @@ LIST P=16F887
     
     ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFINICIOINES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;-------------------------------------------------------------------------------------------
+    TIMER_Z_CROSS   EQU 0x40	    ;CONTADOR PARA HACER RETARDO
+    
     CONTA_Z EQU 0X24	    ;CONTADOR DE CRUCES POR CERO (SIEMPRE VALE 2: LEER CHECK_ZERO_CROSS)
     FREQ_L EQU 0x22	    ;CONTADOR DE LECTURA DE LA FRECUENCIA (NIBBLE INFERIOR)
     CONTA  EQU 0x21	    ;CONTADOR AUXILIAR PARA EL CONTEO DE 1 SEGUNDO DEL TMR1
@@ -18,8 +20,13 @@ LIST P=16F887
     TUNING_STR_H EQU 0X51	    ;FREQ SELECCIONADA PARA SER AFINADA
     DIF_FREQ_L	EQU 0x52    
     DIF_FREQ_H EQU 0x53		    ;DIFERENCIA DE AFINACIONES ENTRE COMPARE Y TUNING	
-	
-
+    TUNING_STATUS_REGISTER  EQU 0X54	    ;REGISTRO DEL ESTADO DE LA ACTUAL AFINACION	
+					    ;[-,-,-,H_SUB_IS_NEGATIVE,L_SUB_IS_NEGATIVE,IS_HIGHER/LOWER,IS_TUNED]
+					    ;IS_TUNED: 0 para desafinada, 1 para afinada (ambas freq iguales)
+					    ;IS_HIGHER/LOWER: 0 para higher, 1 para lower. Se refiere a la frecuencia captada por mic
+					    ;L_SUB_IS_NEGATIVE: 1 si la resta  TUNING_STR_L - FREQ_L_TO_COMPARE es < 0. 0 si no
+					    ;H_SUB_IS_NEGATIVE: idem pero con nibble superior
+					    
     ;-------------->>>>>> FRECUENCIAS GUITARRA <H:L> <<<<<------------------------------
     CBLOCK 0X27		
     
@@ -74,7 +81,7 @@ INICIO
     MOVLW   0x00
     MOVWF   E2_STR_L
     
-    ;pRUEBAS
+    ;PRUEBAS
     
     MOVF    E1_STR_L, 0
     MOVWF   TUNING_STR_L
@@ -84,7 +91,7 @@ INICIO
     ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     
     
-     ;COMPARADOR ANALOGICO (CRUCES POR 0)<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    ;COMPARADOR ANALOGICO (CRUCES POR 0)<<<<<<<<<<<<<<<<<<<<<<<<<<<
     BANKSEL TRISA
     BSF	TRISA, 0
     BSF	TRISA, 3
@@ -114,6 +121,10 @@ INICIO
     CLRF PORTB
     CLRF PORTD
   
+  ; RETARDO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    BANKSEL PORTB
+    MOVLW   .255
+    MOVWF   TIMER_Z_CROSS
   ; TMR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     BANKSEL TMR1H
     MOVLW 0x0B
@@ -136,41 +147,46 @@ INICIO
 ;<<<<<<<<<<<<<<<<<<<<<<<<<<MAIN>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-        ;;;;CORREGIRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
-
 MAIN
    
-    CALL COMPARE_STRINGS
+   CALL	COMPARE
+   BANKSEL PORTB
+   MOVF	FREQ_L_TO_COMPARE, 0
+   MOVWF    PORTB
+   BANKSEL PORTD
+   MOVF	FREQ_H_TO_COMPARE, 0
+   MOVWF    PORTD
+   GOTO MAIN
+ 
+; ----------------------<<<< ETAPA DE COMPARACION >>>>>>>-------------------------------------->
+
+COMPARE
+   BANKSEL PORTB
+   CLRF	TUNING_STATUS_REGISTER
+   MOVF	FREQ_L_TO_COMPARE, 0
+   SUBWF    TUNING_STR_L, 0
+   BTFSS    STATUS, C
+   BSF	TUNING_STATUS_REGISTER, 3
+   MOVWF    DIF_FREQ_L
+   
+   ; comparacion de los nibbles superiores
+   BTFSC    TUNING_STATUS_REGISTER, 3
+   DECF	TUNING_STR_H, 1			
+   MOVF	FREQ_H_TO_COMPARE, 0
+   SUBWF    TUNING_STR_H, 0
+   BTFSS    STATUS, C
+   BSF	TUNING_STATUS_REGISTER, 4
+   MOVWF    DIF_FREQ_H
+   BTFSC    TUNING_STATUS_REGISTER, 3
+   INCF	TUNING_STR_H, 1
+   RETURN
+   
    
     
-	
+;---------------------------------------------------------------------FIN ETAPA COMPARACION
+;----------------------<<<<------------------ >>>>>>>-------------------------------------->
     
-   
-
-    GOTO MAIN
-
-    ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: COMPARE_STRINGS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
-    ;------- Cuando el TMR1 cumple un segundo (teniendo tambien en cuenta
-   
-    ;---------------------------------------------------------------------------
-PRENDER
-    BSF	PORTB,0
-    GOTO END_C_S
-
     
-COMPARE_STRINGS
-    BANKSEL PORTB
-    MOVF    FREQ_L_TO_COMPARE, W
-    SUBWF   TUNING_STR_L, W
-    BTFSC   STATUS, Z
-    GOTO PRENDER
-    BCF	PORTB,0
-    GOTO END_C_S
-END_C_S
-    RETURN
-    ;;;;CORREGIRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
     
     
     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: FREQ_CATCHED >>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -182,8 +198,7 @@ END_C_S
     ;un nuevo recuento del TMR1
     ;---------------------------------------------------------------------------
 FREQ_CATCHED	
-   
-	    
+   	    
     BANKSEL TMR1H
     MOVLW 0x0B
     MOVWF TMR1H
@@ -206,7 +221,7 @@ FREQ_CATCHED
     
     RETURN
 
-     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: INC_FREQ >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: INC_FREQ >>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;------- incrementa el par <FREQ_H : FREQ_L>.
     ;---------------------------------------------------------------------------
 INC_FREQ
@@ -217,8 +232,7 @@ INC_FREQ
     INCF    FREQ_H, F
     CLRF    FREQ_L
     RETURN
-    
-    
+        
      ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: CHECK_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;------- La rutina de interrupciones manda a este lugar cuando el comparador
     ;detectó un cruce por cero. Como en un periodo de 
@@ -240,7 +254,7 @@ CHECK_ZERO_CROSS
     CALL INC_FREQ
     GOTO END_INT_ZERO_CROSS
     
-        ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: END_INT_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: END_INT_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;------- Fin comun para los casos del cruce por cero. Retorna de interrupcion
     ;---------------------------------------------------------------------------
 END_INT_ZERO_CROSS
@@ -248,6 +262,7 @@ END_INT_ZERO_CROSS
     BCF PIR2, 5
     RETFIE
     
+
 INT
     
     BANKSEL PIR1
@@ -256,7 +271,5 @@ INT
     CALL FREQ_CATCHED
     BANKSEL PIR1
     BCF PIR1, TMR1IF
-    RETFIE 
-    
-
+    RETFIE 
 END
