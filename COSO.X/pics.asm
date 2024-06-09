@@ -29,6 +29,9 @@ LIST P=16F887
 					    ;[3] H_SUB_IS_NEGATIVE: idem pero con nibble superior
 					    ;[4] L_IS_TUNED: 1 Si la resta de TUNING_STR_L - FREQ_L_TO_COMPARE = 0
 					    ;[5] H_IS_TUNED: 1 Si la resta de TUNING_STR_H - FREQ_H_TO_COMPARE = 0
+    BUFFER_TO_TX	EQU 0X55		    ;[IS_HIGHER/LOWER, data<6:0>]
+					    ;Buffer del byte comprimido para transmitir o mostrar. 
+					    ;[7] IS_HIGHER/LOWER: 0 si frec medida < frec real. 1 al reves
     ;-------------->>>>>> FRECUENCIAS GUITARRA <H:L> <<<<<------------------------------
     CBLOCK 0X27		
     
@@ -154,8 +157,9 @@ INICIO
 MAIN
     
    CALL	STRING_SELECTION
-   CALL	COMPARE
-   CALL CONVERT_TO_TUNING_METHOD
+   CALL	GET_DEVIATION
+   CALL COMPRESS_TO_1_BYTE		    ;PIERDE DEFINICIO PERO GANA VELOCIDAD Y SIMPLIFICA EL CODIGO
+   CALL SEND_TX
    CALL	SHOW_RES
    GOTO MAIN
 
@@ -230,13 +234,14 @@ END_SELECTION
 ; _---------------------------------------------------------------------------------------------------------------
    
    
-; ----------------------<<<< EXPLICACION: ETAPA DE COMPARACION >>>>>>>-------------------------------------->
+; ----------------------<<<< EXPLICACION: GET DEVIATION >>>>>>>-------------------------------------->
    ;------- Globalmente hace la resta de 16 bits de [TUNING_STR_x - FREQ_x_TO_COMPARE] y guarda el resultado
-    ;------------------------------en DIF_FREQ_x
+    ;------------------------------en DIF_FREQ_x. Ademas, devuelve en los regitros el valor absoluto
+    ; de la desviacion de afinacion entre la frecuencia real y la medida.
     ;Existen tres posibles situaciones que se manejan con el TUNING_STATUS_REGISTER para las restas
 ;-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-COMPARE
+GET_DEVIATION
     CLRF AUX
     CLRF TUNING_STATUS_REGISTER
     MOVF FREQ_L_TO_COMPARE, 0
@@ -286,40 +291,44 @@ CHECK_RESULT
     BTFSC TUNING_STATUS_REGISTER, 4
     BTFSC TUNING_STATUS_REGISTER, 5
     BSF TUNING_STATUS_REGISTER, 0
+
+    BTFSC TUNING_STATUS_REGISTER, 3 
+    BSF TUNING_STATUS_REGISTER, 1   
+    BTFSC TUNING_STATUS_REGISTER, 2 
+    CALL CHECK_L
+    RETURN
+CHECK_L
+    BTFSC   TUNING_STATUS_REGISTER, 5
+    BSF	TUNING_STATUS_REGISTER, 1
     RETURN
 ;-------------------------------------------FIN ETAPA COMPARACION--------------------------------------------------------
      
-   
-; ----------------------<<<< EXPLICACION: CONVERT_TO_TUINING_METHOD >>>>>>>-------------------------------------->
-  ;-------------------- Devuelve en DIF_FREQ_x la desviacion de frecuencias en cantidades iguales, para un lado
-  ; y para el otro. Por ej: luego de CONVERT_TO_TUNING_METHOD con una frecuencia
-;--------real de 330 Hz, DIF_FREQ_x = 0000 0000 0000 0001 tanto si:
-  ;------- frecuencia medida: 331Hz o 329Hz. Muestra solo la desviacion. El registro TUNING_STATUS_REGISTER
-  ;muestra para que lado es la desviacion, en su bit 1 (explicado en DEFINICIONES)
-;-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<EXPLICACION COMPRESS_TO_ONE_BYTE><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    ;------------- Utiliza solo el nibble inferior del calculo de la desviacion de frecuencias. Con esto se pierde rango
+    ; de precision, pero se estima que la cuerda a afinar no necesita una precision exageradamente grande.
+    ;	En 1 byte (buffer) se comprimen los valores del DIF_FREQ_x en 7 bits (menos significativos), y el octavo bit
+    ; indica si la desviacion es hacia la derecha o izquierda.
+COMPRESS_TO_1_BYTE
+   CLRF	BUFFER_TO_TX		    ;LIMPIAR EL BUFFER
+   MOVF	DIF_FREQ_L, 0		    ; SOLO MANDAMOS LA PARTE BAJA DE LA DESVIACION
+   MOVWF BUFFER_TO_TX		    
+   BTFSC    TUNING_STATUS_REGISTER, 1	    ;1 SI HIGHER
+   BSF	BUFFER_TO_TX, 7
+   RETURN   
 
-CONVERT_TO_TUNING_METHOD
-   BTFSC    TUNING_STATUS_REGISTER, 1
-   CALL	COMP2_OPERATION
+ ;---------------------------------SEND_TX<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ ;Subrutina de transmision serie. Carga el buffer en TXREG (BUFFER_TO_TX)
+ 
+SEND_TX
+    NOP
    RETURN
    
-COMP2_OPERATION			; complemento a dos
-   COMF DIF_FREQ_H, F
-   COMF DIF_FREQ_L, F
-   MOVF DIF_FREQ_L, W
-   ADDLW 0x01
-   MOVWF DIF_FREQ_L
-   BTFSS STATUS, C
-   RETURN
-   INCF DIF_FREQ_H, F
-   RETURN
-;---------------------------FIN CONVER_TO_TUNING_METHOD----------------------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-   
- ;-----------------------------SHOW RES->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
- ; muestra resultados en puertos
+;---------------------------------------------------------------------------------------------------
+;-----------------------------SHOW RES->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ ; muestra resultados en puertos y logs
 SHOW_RES
 BANKSEL PORTB
-   MOVF AUX, 0
+   MOVF BUFFER_TO_TX, 0
    MOVWF    PORTB
    RETURN 
   
