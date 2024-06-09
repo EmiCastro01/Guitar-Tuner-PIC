@@ -83,12 +83,7 @@ INICIO
     MOVLW   0x00
     MOVWF   E2_STR_L
     
-    ;PRUEBAS
-    
-    MOVF    E1_STR_L, 0
-    MOVWF   TUNING_STR_L
-    MOVF    E1_STR_H, 0
-    MOVWF   TUNING_STR_H
+   
     
     ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     
@@ -127,6 +122,12 @@ INICIO
     BANKSEL PORTB
     MOVLW   .255
     MOVWF   TIMER_Z_CROSS
+    
+   ;SELECTOR DE CUERDAS EN PUERTO C
+    BANKSEL TRISC
+    MOVLW   0XFF
+    MOVWF   TRISC
+    
   ; TMR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     BANKSEL TMR1H
     MOVLW 0x0B
@@ -151,7 +152,7 @@ INICIO
 
 MAIN
     
-   CALL	CHECK_TUNING_STRING_SELECTED
+   CALL	STRING_SELECTION
    CALL	COMPARE
    CALL CONVERT_TO_TUNING_METHOD
    CALL	SHOW_RES
@@ -162,9 +163,67 @@ MAIN
    ;FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    
    
   
-;-----------------------------	CHECK_TUNING_STRING_SELECTED--------------------------------->>>>>>>>>>>>>>>>>>>>>>>
+;-----------------------------	STRING_ELECTION--------------------------------->>>>>>>>>>>>>>>>>>>>>>>
    ;ACA HACER LA LOGICA PARA SELECCIONAR LA CUERDA A AFINAR
-CHECK_TUNING_STRING_SELECTED
+STRING_SELECTION
+   BANKSEL PORTC
+   BTFSC    PORTC, 0
+   GOTO	    SELECT_E1
+   BTFSC    PORTC,1
+   GOTO SELECT_B
+   BTFSC    PORTC,2
+   GOTO SELECT_G
+   BTFSC    PORTC, 3
+   GOTO SELECT_D
+   BTFSC    PORTC, 4
+   GOTO SELECT_A
+   BTFSC    PORTC, 5
+   GOTO SELECT_E2
+   GOTO END_SELECTION
+
+SELECT_E1
+    MOVF    E1_STR_L, 0
+    MOVWF   TUNING_STR_L
+    MOVF    E1_STR_H, 0
+    MOVWF   TUNING_STR_H
+    GOTO END_SELECTION
+   
+SELECT_B
+    MOVF    B_STR_L, 0
+    MOVWF   TUNING_STR_L
+    MOVF    B_STR_H, 0
+    MOVWF   TUNING_STR_H
+    GOTO END_SELECTION
+   
+SELECT_G
+    MOVF    G_STR_L, 0
+    MOVWF   TUNING_STR_L
+    MOVF    G_STR_H, 0
+    MOVWF   TUNING_STR_H   
+    GOTO END_SELECTION
+   
+SELECT_D
+    MOVF    D_STR_L, 0
+    MOVWF   TUNING_STR_L
+    MOVF    D_STR_H, 0
+    MOVWF   TUNING_STR_H
+    GOTO END_SELECTION
+    
+SELECT_A
+    MOVF    A_STR_L, 0
+    MOVWF   TUNING_STR_L
+    MOVF    A_STR_H, 0
+    MOVWF   TUNING_STR_H
+    GOTO END_SELECTION
+    
+SELECT_E2
+    MOVF    E2_STR_L, 0
+    MOVWF   TUNING_STR_L
+    MOVF    E2_STR_H, 0
+    MOVWF   TUNING_STR_H
+    GOTO END_SELECTION
+    
+END_SELECTION   
    RETURN
    
 ; _---------------------------------------------------------------------------------------------------------------
