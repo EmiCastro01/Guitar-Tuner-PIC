@@ -44,6 +44,7 @@ LIST P=16F887
     A_STR_H	    ;CUERDA 5: LA - 110Hz
     E2_STR_L	    
     E2_STR_H	    ;CUERDA 6: MI - 82Hz
+    
     ENDC
     ;------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------
@@ -81,7 +82,7 @@ INICIO
     MOVLW   0x52
     MOVWF   E2_STR_L
     MOVLW   0x00
-    MOVWF   E2_STR_L
+    MOVWF   E2_STR_H
     
    
     
@@ -177,7 +178,7 @@ STRING_SELECTION
    GOTO SELECT_D
    BTFSC    PORTC, 4
    GOTO SELECT_A
-   BTFSC    PORTC, 5
+   BTFSC    PORTC, 6
    GOTO SELECT_E2
    GOTO END_SELECTION
 
@@ -236,49 +237,56 @@ END_SELECTION
 ;-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 COMPARE
-   BANKSEL PORTB
-   CLRF	TUNING_STATUS_REGISTER
-   MOVF	FREQ_L_TO_COMPARE, 0
-   SUBWF    TUNING_STR_L, 0
-   BTFSC    STATUS, Z
-   BSF	TUNING_STATUS_REGISTER, 4
-   BTFSS    STATUS, C
-   BSF	TUNING_STATUS_REGISTER, 2
-   MOVWF    DIF_FREQ_L
-   
-   ; comparacion de los nibbles superiores
-   BTFSC    TUNING_STATUS_REGISTER, 2
-   DECF	TUNING_STR_H, 1			
-   MOVF	FREQ_H_TO_COMPARE, 0
-   SUBWF    TUNING_STR_H, 0
-   BTFSC    STATUS, Z
-   BSF	TUNING_STATUS_REGISTER, 5
-   BTFSS    STATUS, C
-   CALL	UP_FLAGS
-   MOVWF    DIF_FREQ_H
-   BTFSC    TUNING_STATUS_REGISTER, 2
-   INCF	TUNING_STR_H, 1			    ;ESTE METODO FUNCUIONA PERO SI JUSTO ES INTERRUMPIDO CUANDO ESTO FUIE DECREMENTANDO SE ROMPE
-   
-   BTFSC    TUNING_STATUS_REGISTER, 4
-   CALL CHECK_RES_STATUS
-   
-   BTFSC    TUNING_STATUS_REGISTER, 5
-   CALL CHECK_RES_STATUS_2
-   RETURN
+    CLRF AUX
+    CLRF TUNING_STATUS_REGISTER
+    MOVF FREQ_L_TO_COMPARE, 0
+    SUBWF TUNING_STR_L, 0
+    BTFSC STATUS, Z
+    BSF TUNING_STATUS_REGISTER, 4
+    BTFSS STATUS, C
+    BSF TUNING_STATUS_REGISTER, 2
+    MOVWF DIF_FREQ_L
 
-UP_FLAGS
-   BSF	TUNING_STATUS_REGISTER, 3
-   BSF	TUNING_STATUS_REGISTER, 1 
-   RETURN
-CHECK_RES_STATUS_2			    ;REVISA POSIBLE FRECUENCIA MEDIDA > FRECUENCIA REAL
-   BTFSC    TUNING_STATUS_REGISTER, 2
-   BSF	TUNING_STATUS_REGISTER, 1
-   RETURN
+    
+    BTFSC TUNING_STATUS_REGISTER, 2
+    GOTO NEGATIVE_L
+
+POSITIVE_L
+    MOVF DIF_FREQ_L, 0
+    GOTO COMPARE_HIGH
+
+NEGATIVE_L
    
-CHECK_RES_STATUS			    ;REVISA POSIBLE AFINACION CORRECTA
-   BTFSC    TUNING_STATUS_REGISTER, 5
-   BSF	TUNING_STATUS_REGISTER, 0
-   RETURN
+    COMF DIF_FREQ_L, F
+    INCF DIF_FREQ_L, F
+
+COMPARE_HIGH
+    MOVF FREQ_H_TO_COMPARE, 0
+    SUBWF TUNING_STR_H, 0
+    BTFSC STATUS, Z
+    BSF TUNING_STATUS_REGISTER, 5
+    BTFSS STATUS, C
+    BSF TUNING_STATUS_REGISTER, 3
+    MOVWF DIF_FREQ_H
+
+    BTFSC TUNING_STATUS_REGISTER, 3
+    GOTO NEGATIVE_H
+
+POSITIVE_H
+    MOVF DIF_FREQ_H, 0
+    GOTO CHECK_RESULT
+
+NEGATIVE_H
+  
+    COMF DIF_FREQ_H, F
+    INCF DIF_FREQ_H, F
+
+CHECK_RESULT
+    
+    BTFSC TUNING_STATUS_REGISTER, 4
+    BTFSC TUNING_STATUS_REGISTER, 5
+    BSF TUNING_STATUS_REGISTER, 0
+    RETURN
 ;-------------------------------------------FIN ETAPA COMPARACION--------------------------------------------------------
      
    
@@ -310,12 +318,9 @@ COMP2_OPERATION			; complemento a dos
  ;-----------------------------SHOW RES->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
  ; muestra resultados en puertos
 SHOW_RES
-   BANKSEL PORTB
-   MOVF	DIF_FREQ_L, 0
+BANKSEL PORTB
+   MOVF AUX, 0
    MOVWF    PORTB
-   BANKSEL PORTD
-   MOVF	DIF_FREQ_H, 0
-   MOVWF    PORTD
    RETURN 
   
     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: FREQ_CATCHED >>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -392,6 +397,8 @@ END_INT_ZERO_CROSS
     RETFIE
     
 
+    ;----------->>>>>>>> RUTINA DE INTERRUPCIONES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
 INT
     ; Guardo contexto
     MOVWF W_CONTEXT     
@@ -411,6 +418,7 @@ INT
     MOVWF STATUS         
     SWAPF W_CONTEXT, F      
     SWAPF W_CONTEXT, W      
-
     RETFIE
+    
+;------------------------------------------------------------------------------------------->
 END
