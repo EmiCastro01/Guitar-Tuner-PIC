@@ -31,7 +31,9 @@ LIST P=16F887
 					    ;[5] H_IS_TUNED: 1 Si la resta de TUNING_STR_H - FREQ_H_TO_COMPARE = 0
     BUFFER_TO_TX	EQU 0X55		    ;[IS_HIGHER/LOWER, data<6:0>]
 					    ;Buffer del byte comprimido para transmitir o mostrar. 
-					    ;[7] IS_HIGHER/LOWER: 0 si frec medida < frec real. 1 al reves
+					    ;[7] IS_HIGHER/LOWER: 0 si frec medida < frec real. 1 al reVES
+    BUFFER_MASK		EQU 0X57
+    TUNING_OUTPUT	EQU 0X56		    ;VALOR QUE SEND_PORT MUESTRA EN EL PUERTO. OPERADO SOBRE EL BUFFER
     ;-------------->>>>>> FRECUENCIAS GUITARRA <H:L> <<<<<------------------------------
     CBLOCK 0X27		
     
@@ -51,6 +53,24 @@ LIST P=16F887
     ENDC
     ;------------------------------------------------------------------------------
     ;------------------------------------------------------------------------------------
+;DEFINICIONES PARA TUNING_STATUS_REGISTER
+#define	IS_TUNED 0
+#define	IS_HIGHER_LOWER 1
+#define	L_SUB_IS_NEGATIVE 2
+#define	H_SUB_IS_NEGATIVE 3
+#define	L_IS_TUNED 4
+#define	H_IS_TUNED 5
+    
+;DEFINICIONES PARA TUNING_OUTPUT
+#define NEG_TUNE_2_LED  0
+#define	NEG_TUNE_1_LED  1
+#define	NEG_TUNE_0_LED  2
+#define	IN_TUNE_LED  3
+#define POS_TUNE_0_LED  4
+#define	POS_TUNE_1_LED  5
+#define	POS_TUNE_2_LED	6
+
+
     
     ORG 0x00
     GOTO INICIO
@@ -187,44 +207,44 @@ STRING_SELECTION
    GOTO END_SELECTION
 
 SELECT_E1
-    MOVF    E1_STR_L, 0
+    MOVF    E1_STR_L, W
     MOVWF   TUNING_STR_L
-    MOVF    E1_STR_H, 0
+    MOVF    E1_STR_H, W
     MOVWF   TUNING_STR_H
     GOTO END_SELECTION
    
 SELECT_B
-    MOVF    B_STR_L, 0
+    MOVF    B_STR_L, W
     MOVWF   TUNING_STR_L
-    MOVF    B_STR_H, 0
+    MOVF    B_STR_H, W
     MOVWF   TUNING_STR_H
     GOTO END_SELECTION
    
 SELECT_G
-    MOVF    G_STR_L, 0
+    MOVF    G_STR_L, W
     MOVWF   TUNING_STR_L
-    MOVF    G_STR_H, 0
+    MOVF    G_STR_H, W
     MOVWF   TUNING_STR_H   
     GOTO END_SELECTION
    
 SELECT_D
-    MOVF    D_STR_L, 0
+    MOVF    D_STR_L, W
     MOVWF   TUNING_STR_L
-    MOVF    D_STR_H, 0
+    MOVF    D_STR_H, W
     MOVWF   TUNING_STR_H
     GOTO END_SELECTION
     
 SELECT_A
-    MOVF    A_STR_L, 0
+    MOVF    A_STR_L, W
     MOVWF   TUNING_STR_L
-    MOVF    A_STR_H, 0
+    MOVF    A_STR_H, W
     MOVWF   TUNING_STR_H
     GOTO END_SELECTION
     
 SELECT_E2
-    MOVF    E2_STR_L, 0
+    MOVF    E2_STR_L, W
     MOVWF   TUNING_STR_L
-    MOVF    E2_STR_H, 0
+    MOVF    E2_STR_H, W
     MOVWF   TUNING_STR_H
     GOTO END_SELECTION
     
@@ -244,62 +264,62 @@ END_SELECTION
 GET_DEVIATION
     CLRF AUX
     CLRF TUNING_STATUS_REGISTER
-    MOVF FREQ_L_TO_COMPARE, 0
-    SUBWF TUNING_STR_L, 0
+    ;Calculo parte baja (L)
+    MOVF FREQ_L_TO_COMPARE, W
+    SUBWF TUNING_STR_L, W
     BTFSC STATUS, Z
-    BSF TUNING_STATUS_REGISTER, 4
+    BSF TUNING_STATUS_REGISTER, L_IS_TUNED
     BTFSS STATUS, C
-    BSF TUNING_STATUS_REGISTER, 2
+    BSF TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE
     MOVWF DIF_FREQ_L
-
     
-    BTFSC TUNING_STATUS_REGISTER, 2
+    BTFSC TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE
     GOTO NEGATIVE_L
-
-POSITIVE_L
-    MOVF DIF_FREQ_L, 0
     GOTO COMPARE_HIGH
 
+    
+
 NEGATIVE_L
-   
     COMF DIF_FREQ_L, F
     INCF DIF_FREQ_L, F
 
 COMPARE_HIGH
-    MOVF FREQ_H_TO_COMPARE, 0
-    SUBWF TUNING_STR_H, 0
+ 
+    MOVF FREQ_H_TO_COMPARE, W
+    SUBWF TUNING_STR_H, W
     BTFSC STATUS, Z
-    BSF TUNING_STATUS_REGISTER, 5
+    BSF TUNING_STATUS_REGISTER, H_IS_TUNED
     BTFSS STATUS, C
-    BSF TUNING_STATUS_REGISTER, 3
-    MOVWF DIF_FREQ_H
+    BSF TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE
+    MOVWF DIF_FREQ_H 
 
-    BTFSC TUNING_STATUS_REGISTER, 3
+    BTFSC TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE
     GOTO NEGATIVE_H
-
-POSITIVE_H
-    MOVF DIF_FREQ_H, 0
     GOTO CHECK_RESULT
 
 NEGATIVE_H
-  
     COMF DIF_FREQ_H, F
     INCF DIF_FREQ_H, F
+    COMF DIF_FREQ_L, F
+    INCF DIF_FREQ_L, F
 
 CHECK_RESULT
-    
-    BTFSC TUNING_STATUS_REGISTER, 4
-    BTFSC TUNING_STATUS_REGISTER, 5
-    BSF TUNING_STATUS_REGISTER, 0
-
-    BTFSC TUNING_STATUS_REGISTER, 3 
-    BSF TUNING_STATUS_REGISTER, 1   
-    BTFSC TUNING_STATUS_REGISTER, 2 
+    BTFSC TUNING_STATUS_REGISTER, L_IS_TUNED
+    CALL CHECK_H
+    BTFSC TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE 
+    BSF TUNING_STATUS_REGISTER, IS_HIGHER_LOWER   
+    BTFSC TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE 
     CALL CHECK_L
     RETURN
+
 CHECK_L
-    BTFSC   TUNING_STATUS_REGISTER, 5
-    BSF	TUNING_STATUS_REGISTER, 1
+    BTFSC   TUNING_STATUS_REGISTER, H_IS_TUNED
+    BSF	TUNING_STATUS_REGISTER, IS_HIGHER_LOWER
+    RETURN
+
+CHECK_H
+    BTFSC   TUNING_STATUS_REGISTER, H_IS_TUNED
+    BSF	TUNING_STATUS_REGISTER, IS_TUNED
     RETURN
 ;-------------------------------------------FIN ETAPA COMPARACION--------------------------------------------------------
      
@@ -310,9 +330,9 @@ CHECK_L
     ; indica si la desviacion es hacia la derecha o izquierda.
 COMPRESS_TO_1_BYTE
    CLRF	BUFFER_TO_TX		    ;LIMPIAR EL BUFFER
-   MOVF	DIF_FREQ_L, 0		    ; SOLO MANDAMOS LA PARTE BAJA DE LA DESVIACION
+   MOVF	DIF_FREQ_L, W		    ; SOLO MANDAMOS LA PARTE BAJA DE LA DESVIACION
    MOVWF BUFFER_TO_TX		    
-   BTFSC    TUNING_STATUS_REGISTER, 1	    ;1 SI HIGHER
+   BTFSC    TUNING_STATUS_REGISTER, IS_HIGHER_LOWER	    ;1 SI HIGHER
    BSF	BUFFER_TO_TX, 7
    RETURN   
 
@@ -325,13 +345,74 @@ SEND_TX
    
 ;---------------------------------------------------------------------------------------------------
 ;-----------------------------SEND PORT->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
- ; muestra resultados en puertos y logs
+ ; muestra resultados en puertos con la logica del afinador
+ 
 SEND_PORT   
    BANKSEL PORTB
-   MOVF BUFFER_TO_TX, 0
+   CALL	MAP 
+   MOVF TUNING_OUTPUT, W
    MOVWF    PORTB
-   RETURN 
+   
   
+   
+   RETURN 
+;----------------------------MAP: Subrutinba de Send_port<<<<<<<<<<<<
+   ; Mapea los valores del buffer a valores que pueden ser mostrados en 7 leds. 3 para un sentido de afinacion
+   ; 3 para el otro y uno que indica si la cuerda esta afinada. El valor de step es de .21
+   ;utiliza una mascara para desligarse del bit de orientacion (0x7F)
+MAP
+    CLRF BUFFER_MASK
+    CLRF TUNING_OUTPUT
+    MOVF    BUFFER_TO_TX, W
+    MOVWF   BUFFER_MASK			;TRABAJA CON LA MASCARA
+    MOVLW   0X7F
+    ANDWF   BUFFER_MASK, F
+    BTFSC STATUS, Z    
+    GOTO TUNED      
+    BTFSC BUFFER_TO_TX, 7
+    GOTO NEGATIVE      
+    GOTO POSITIVE    
+    GOTO END_MAP
+
+
+NEGATIVE
+    MOVLW .21
+    SUBWF   BUFFER_MASK, W
+    BTFSS   STATUS, C
+    BSF	TUNING_OUTPUT, NEG_TUNE_0_LED
+    MOVLW .42
+    SUBWF   BUFFER_MASK, W
+    BTFSS   STATUS, C
+    BSF	TUNING_OUTPUT, NEG_TUNE_1_LED
+    MOVLW .63
+    SUBWF   BUFFER_MASK, W
+    BTFSS   STATUS, C
+    BSF	TUNING_OUTPUT, NEG_TUNE_2_LED
+    GOTO END_MAP
+
+POSITIVE
+    MOVLW .21
+    SUBWF   BUFFER_MASK, W
+    BTFSS   STATUS, C
+    BSF	TUNING_OUTPUT, POS_TUNE_0_LED
+    MOVLW .42
+    SUBWF   BUFFER_MASK, W
+    BTFSS   STATUS, C
+    BSF	TUNING_OUTPUT, POS_TUNE_1_LED
+    MOVLW .63
+    SUBWF   BUFFER_MASK, W
+    BTFSS   STATUS, C
+    BSF	TUNING_OUTPUT, POS_TUNE_2_LED
+    GOTO END_MAP
+TUNED
+    BSF	TUNING_OUTPUT, IN_TUNE_LED
+    GOTO END_MAP
+END_MAP
+    RETURN
+ 
+;---------------------------------------------------------------------------------------------
+;-------------------------FIN SEND_PORT----------------------------------------------------->
+    
     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: FREQ_CATCHED >>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;------- Cuando el TMR1 cumple un segundo (teniendo tambien en cuenta
     ; el contador (CONTA), se toma la frecuencia medida en los registros
@@ -361,7 +442,7 @@ FREQ_CATCHED
     CLRF    FREQ_H
     MOVLW .16
     MOVWF CONTA
-    
+
     RETURN
 
     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: INC_FREQ >>>>>>>>>>>>>>>>>>>>>>>>>>>>
