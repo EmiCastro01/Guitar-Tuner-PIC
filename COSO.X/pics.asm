@@ -158,9 +158,9 @@ MAIN
     
    CALL	STRING_SELECTION
    CALL	GET_DEVIATION
-   CALL COMPRESS_TO_1_BYTE		    ;PIERDE DEFINICIO PERO GANA VELOCIDAD Y SIMPLIFICA EL CODIGO
+   CALL COMPRESS_TO_1_BYTE		   
    CALL SEND_TX
-   CALL	SHOW_RES
+   CALL	SEND_PORT
    GOTO MAIN
 
 
@@ -324,10 +324,10 @@ SEND_TX
    RETURN
    
 ;---------------------------------------------------------------------------------------------------
-;-----------------------------SHOW RES->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;-----------------------------SEND PORT->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
  ; muestra resultados en puertos y logs
-SHOW_RES
-BANKSEL PORTB
+SEND_PORT   
+   BANKSEL PORTB
    MOVF BUFFER_TO_TX, 0
    MOVWF    PORTB
    RETURN 

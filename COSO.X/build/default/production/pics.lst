@@ -1,4 +1,4 @@
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  1
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ Warning[207]: Found label after column 1. (TUNING_STATUS_REGISTER)
   00000054            00024     TUNING_STATUS_REGISTER  EQU 0X54        ;REGISTRO DEL ESTADO DE LA ACTUAL AFINACION 
                       00025                                             ;[-,-,H_IS_TUNED,L_IS_TUNED,H_SUB_IS_NEGATIVE,L_SUB_IS_NEGAT
                             IVE,IS_HIGHER/LOWER,IS_TUNED]
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  2
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ Warning[207]: Found label after column 1. (BUFFER_TO_TX)
 000A   00A8           00068     MOVWF   E1_STR_H
 000B   30F6           00069     MOVLW   0xF6
 000C   00A9           00070     MOVWF   B_STR_L
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  3
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
 0036   00A1           00116     MOVWF CONTA
 0037   01A0           00117     CLRF AUX
 0038   1683 1303      00118     BANKSEL TRISB
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  4
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -229,12 +229,12 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
                       00158     
 0058   2???           00159    CALL STRING_SELECTION
 0059   2???           00160    CALL GET_DEVIATION
-005A   2???           00161    CALL COMPRESS_TO_1_BYTE                  ;PIERDE DEFINICIO PERO GANA VELOCIDAD Y SIMPLIFICA EL CODIGO
+005A   2???           00161    CALL COMPRESS_TO_1_BYTE                 
 005B   2???           00162    CALL SEND_TX
-005C   2???           00163    CALL SHOW_RES
+005C   2???           00163    CALL SEND_PORT
 005D   2???           00164    GOTO MAIN
                       00165 
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  5
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -293,7 +293,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 007F   00D1           00214     MOVWF   TUNING_STR_H
 0080   2???           00215     GOTO END_SELECTION
                       00216     
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  6
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -352,7 +352,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00264    
 0099   09D2           00265     COMF DIF_FREQ_L, F
 009A   0AD2           00266     INCF DIF_FREQ_L, F
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  7
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -411,7 +411,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00B3   01D5           00312    CLRF BUFFER_TO_TX                ;LIMPIAR EL BUFFER
 00B4   0852           00313    MOVF DIF_FREQ_L, 0               ; SOLO MANDAMOS LA PARTE BAJA DE LA DESVIACION
 00B5   00D5           00314    MOVWF BUFFER_TO_TX               
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  8
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -430,11 +430,10 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00BA   0008           00324    RETURN
                       00325    
                       00326 ;---------------------------------------------------------------------------------------------------
-                      00327 ;-----------------------------SHOW RES->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                      00327 ;-----------------------------SEND PORT->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                       00328  ; muestra resultados en puertos y logs
-00BB                  00329 SHOW_RES
-Warning[205]: Found directive in column 1. (BANKSEL)
-00BB   1283 1303      00330 BANKSEL PORTB
+00BB                  00329 SEND_PORT   
+00BB   1283 1303      00330    BANKSEL PORTB
 00BD   0855           00331    MOVF BUFFER_TO_TX, 0
 00BE   0086           00332    MOVWF    PORTB
 00BF   0008           00333    RETURN 
@@ -470,13 +469,13 @@ Message[305]: Using default destination of 1 (file).
 00D2   3010           00362     MOVLW .16
 00D3   00A1           00363     MOVWF CONTA
                       00364     
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE  9
+00D4   0008           00365     RETURN
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00D4   0008           00365     RETURN
                       00366 
                       00367     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: INC_FREQ >>>>>>>>>>>>>>>>>>>>>>>>>>>>
                       00368     ;------- incrementa el par <FREQ_H : FREQ_L>.
@@ -529,13 +528,13 @@ Message[305]: Using default destination of 1 (file).
 00F0   0E03           00414     SWAPF STATUS, W  
 00F1   01C1           00415     CLRF STATUS_CONTEXT  
 00F2   00C1           00416     MOVWF STATUS_CONTEXT
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 10
+                      00417 
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00417 
 00F3   1283 1303      00418     BANKSEL PIR1
 00F5   1C0C           00419     BTFSS PIR1, TMR1IF
 00F6   2???           00420     GOTO CHECK_ZERO_CROSS
@@ -553,7 +552,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00432 ;------------------------------------------------------------------------------------------->
 Warning[205]: Found directive in column 1. (END)
 2FF6 3FFF             00433 END
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 11
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 11
 
 
 SYMBOL TABLE
@@ -612,7 +611,7 @@ BRG3                              00000003
 BRG4                              00000004
 BRG5                              00000005
 BRG6                              00000006
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 12
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 12
 
 
 SYMBOL TABLE
@@ -671,7 +670,7 @@ CCPR1                             00000015
 CCPR1H                            00000016
 CCPR1L                            00000015
 CCPR2                             0000001B
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 13
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 13
 
 
 SYMBOL TABLE
@@ -730,7 +729,7 @@ EEIE                              00000004
 EEIF                              00000004
 EEPGD                             00000007
 END_INT_ZERO_CROSS                000000EB
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 14
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 14
 
 
 SYMBOL TABLE
@@ -789,7 +788,7 @@ MSK0                              00000000
 MSK1                              00000001
 MSK2                              00000002
 MSK3                              00000003
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 15
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 15
 
 
 SYMBOL TABLE
@@ -848,7 +847,7 @@ PORTD                             00000008
 PORTE                             00000009
 POSITIVE_H                        000000A4
 POSITIVE_L                        00000097
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 16
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 16
 
 
 SYMBOL TABLE
@@ -907,7 +906,7 @@ RCSTA                             00000018
 RD                                00000000
 RD0                               00000000
 RD1                               00000001
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 17
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 17
 
 
 SYMBOL TABLE
@@ -943,8 +942,8 @@ SELECT_E2                         00000086
 SELECT_G                          00000077
 SEN                               00000000
 SENDB                             00000003
+SEND_PORT                         000000BB
 SEND_TX                           000000B9
-SHOW_RES                          000000BB
 SMP                               00000007
 SPBRG                             00000099
 SPBRGH                            0000009A
@@ -966,7 +965,7 @@ SSPM2                             00000002
 SSPM3                             00000003
 SSPMSK                            00000093
 SSPOV                             00000006
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 18
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 18
 
 
 SYMBOL TABLE
@@ -1025,7 +1024,7 @@ TRISA1                            00000001
 TRISA2                            00000002
 TRISA3                            00000003
 TRISA4                            00000004
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 19
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 19
 
 
 SYMBOL TABLE
@@ -1084,7 +1083,7 @@ TXIE                              00000004
 TXIF                              00000004
 TXREG                             00000019
 TXSTA                             00000098
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 20
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 20
 
 
 SYMBOL TABLE
@@ -1143,7 +1142,7 @@ _CONFIG1                          00002007
 _CONFIG2                          00002008
 _CPD_OFF                          00003FFF
 _CPD_ON                           00003F7F
-MPASM 5.87                          PICS.ASM   6-9-2024  20:00:41         PAGE 21
+MPASM 5.87                          PICS.ASM   6-9-2024  22:11:35         PAGE 21
 
 
 SYMBOL TABLE
@@ -1199,7 +1198,7 @@ _XT_OSC                           00003FF9
 __16F887                          00000001
 
 Errors   :     0
-Warnings :    19 reported,     0 suppressed
+Warnings :    18 reported,     0 suppressed
 Messages :    11 reported,     0 suppressed
 
 
