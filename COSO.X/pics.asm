@@ -135,23 +135,21 @@ INICIO
     MOVLW .16
     MOVWF CONTA
     CLRF AUX
-    BANKSEL TRISB
-    CLRF TRISB
+    BANKSEL TRISD
     CLRF TRISD
     BANKSEL PORTB
-    CLRF PORTB
-    CLRF PORTD
   
   ; RETARDO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     BANKSEL PORTB
     MOVLW   .255
     MOVWF   TIMER_Z_CROSS
     
-   ;SELECTOR DE CUERDAS EN PUERTO C
-    BANKSEL TRISC
+   ;SELECTOR DE CUERDAS EN PUERTO B
+    BANKSEL TRISB
     MOVLW   0XFF
-    MOVWF   TRISC
-    
+    MOVWF   TRISB
+    BANKSEL ANSELH
+    CLRF ANSELH
   ; TMR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     BANKSEL TMR1H
     MOVLW 0x0B
@@ -165,22 +163,26 @@ INICIO
     
     BANKSEL PIE1
     BSF PIE1, TMR1IE 
+    
+    
     ;-------------------------------------------------------
     
-    MOVLW b'11100000'
+    MOVLW b'11000000'
     MOVWF INTCON 
+    
+   
     
     GOTO MAIN
 ;MAIN MAIN MAIN MAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAIN
 ;MAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAIN
 
 MAIN
-    
    CALL	STRING_SELECTION
    CALL	GET_DEVIATION
    CALL COMPRESS_TO_1_BYTE		   
    CALL SEND_TX
    CALL	SEND_PORT
+ 
    GOTO MAIN
 
 
@@ -191,18 +193,18 @@ MAIN
 ;-----------------------------	STRING_ELECTION--------------------------------->>>>>>>>>>>>>>>>>>>>>>>
    ;ACA HACER LA LOGICA PARA SELECCIONAR LA CUERDA A AFINAR
 STRING_SELECTION
-   BANKSEL PORTC
-   BTFSC    PORTC, 0
+   BANKSEL PORTB
+   BTFSC    PORTB, 0
    GOTO	    SELECT_E1
-   BTFSC    PORTC,1
+   BTFSC    PORTB,1
    GOTO SELECT_B
-   BTFSC    PORTC,2
+   BTFSC    PORTB,2
    GOTO SELECT_G
-   BTFSC    PORTC, 3
+   BTFSC    PORTB, 3
    GOTO SELECT_D
-   BTFSC    PORTC, 4
+   BTFSC    PORTB, 4
    GOTO SELECT_A
-   BTFSC    PORTC, 6
+   BTFSC    PORTB, 6
    GOTO SELECT_E2
    GOTO END_SELECTION
 
@@ -351,9 +353,8 @@ SEND_PORT
    BANKSEL PORTB
    CALL	MAP 
    MOVF TUNING_OUTPUT, W
-   MOVWF    PORTB
-   
-  
+   BANKSEL PORTD
+   MOVWF    PORTD
    
    RETURN 
 ;----------------------------MAP: Subrutinba de Send_port<<<<<<<<<<<<
@@ -361,6 +362,7 @@ SEND_PORT
    ; 3 para el otro y uno que indica si la cuerda esta afinada. El valor de step es de .21
    ;utiliza una mascara para desligarse del bit de orientacion (0x7F)
 MAP
+   BANKSEL PORTB
     CLRF BUFFER_MASK
     CLRF TUNING_OUTPUT
     MOVF    BUFFER_TO_TX, W
