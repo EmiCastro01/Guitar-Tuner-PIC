@@ -75,7 +75,7 @@ LIST P=16F887
 
 ;DEFINICIONES DE VALORES PARA EL MUESTREO POR EL PORTB
 #define SPREAD	.3		    ;si disminuyen aumentan presicion pero disminuyen rango
-#define STEP	.15		    ;el spred es el rango de frecuencias para arriba y para abajo que toma como afinado, sin estar
+#define STEP	.25		    ;el spred es el rango de frecuencias para arriba y para abajo que toma como afinado, sin estar
 				    ; ciertamente afinado
     
     ORG 0x00
@@ -136,7 +136,7 @@ INICIO
     BSF	ANSEL, 3
     BANKSEL CM1CON0
     BSF	CM1CON0, 7
-     BANKSEL PIE2
+    BANKSEL PIE2
     MOVLW   B'00100000'
     MOVWF   PIE2
     ; --------------------------------------------
@@ -198,7 +198,6 @@ MAIN
    CALL COMPRESS_TO_1_BYTE		   
    CALL SEND_TX
    CALL	SEND_PORT
- 
    GOTO MAIN
 
 
@@ -282,7 +281,6 @@ END_SELECTION
 GET_DEVIATION
     CLRF AUX
     CLRF TUNING_STATUS_REGISTER
-    ;Calculo parte baja (L)
     MOVF FREQ_L_TO_COMPARE, W
     SUBWF TUNING_STR_L, W
     BTFSC STATUS, Z
@@ -298,8 +296,11 @@ GET_DEVIATION
     
 
 NEGATIVE_L
-    COMF DIF_FREQ_L, F
-    INCF DIF_FREQ_L, F
+    BTFSC   TUNING_STR_H, 0
+    GOTO COMPARE_HIGH
+    MOVF   TUNING_STR_L, W
+    SUBWF   FREQ_L_TO_COMPARE, W
+    MOVWF   DIF_FREQ_L
 
 COMPARE_HIGH
  
@@ -349,11 +350,27 @@ CHECK_H
 COMPRESS_TO_1_BYTE
    CLRF	BUFFER_TO_TX		    ;LIMPIAR EL BUFFER
    MOVF	DIF_FREQ_L, W		    ; SOLO MANDAMOS LA PARTE BAJA DE LA DESVIACION
-   MOVWF BUFFER_TO_TX		    
+   MOVWF BUFFER_TO_TX	
+   MOVF	BUFFER_TO_TX, W
+   SUBLW    b'01111111'		;En el caso de que el valor sea mayor a 127, el byte se pone todo en alto indicando exceso de desviacion
+   BTFSS    STATUS, C
+   GOTO OUT_OF_RANGE
+   BCF	BUFFER_TO_TX, 7
    BTFSC    TUNING_STATUS_REGISTER, IS_HIGHER_LOWER	    ;1 SI HIGHER
    BSF	BUFFER_TO_TX, 7
-   RETURN   
+   GOTO END_COMPRESSION
 
+   
+OUT_OF_RANGE				    ;esto le saca al afinador la posibilidad de detectar una desafinacion de 127 Hz, pero le da la posibilidad de detectar si esta fuera de rango
+   MOVLW    0XFF
+   MOVWF    BUFFER_TO_TX
+   BCF	    BUFFER_TO_TX, 7
+   BTFSC    TUNING_STATUS_REGISTER, IS_HIGHER_LOWER	    
+   BSF	BUFFER_TO_TX, 7
+   GOTO END_COMPRESSION
+   
+END_COMPRESSION
+   RETURN
  ;---------------------------------SEND_TX<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
  ;Subrutina de transmision serie. Carga el buffer en TXREG (BUFFER_TO_TX)
  
@@ -394,6 +411,10 @@ MAP
 
 
 NEGATIVE
+    MOVLW   0X7F
+    SUBWF   BUFFER_MASK, W
+    BTFSC   STATUS, Z
+    BSF	TUNING_OUTPUT, NEG_TUNE_2_LED	    ;CASO OUT OF RANGE
     MOVLW SPREAD
     SUBWF   BUFFER_MASK, W
     BTFSS STATUS, C
@@ -413,6 +434,10 @@ NEGATIVE
     GOTO END_MAP
 
 POSITIVE
+    MOVLW   0X7F
+    SUBWF   BUFFER_MASK, W
+    BTFSC   STATUS, Z
+    BSF	TUNING_OUTPUT, POS_TUNE_2_LED	    ;CASO OUT OF RANGE
     MOVLW SPREAD
     SUBWF   BUFFER_MASK, W
     BTFSS STATUS, C

@@ -1,20 +1,12 @@
 MPLINK 5.09, LINKER
-<<<<<<< HEAD
-Linker Map File - Created Tue Jun 11 21:53:33 2024
-=======
-Linker Map File - Created Mon Jun 10 17:03:52 2024
->>>>>>> e0370640d34a1790af13b83025ae2c18bcdc66b7
+Linker Map File - Created Wed Jun 12 00:34:16 2024
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000002
                    .cinit    romdata   0x000001    program   0x000004
-<<<<<<< HEAD
-                   .org_1       code   0x000004    program   0x000278
-=======
-                   .org_1       code   0x000004    program   0x000258
->>>>>>> e0370640d34a1790af13b83025ae2c18bcdc66b7
+                   .org_1       code   0x000004    program   0x0002a6
 .config_2007_BUILD/DEFAULT/PRODUCTION/PICS.O       code   0x002007    program   0x000002
 .config_2008_BUILD/DEFAULT/PRODUCTION/PICS.O       code   0x002008    program   0x000002
 
@@ -24,84 +16,47 @@ Linker Map File - Created Mon Jun 10 17:03:52 2024
                                Start         End      
                            ---------   ---------      
                             0x000000    0x000002      
-<<<<<<< HEAD
-                            0x000004    0x00013f      
+                            0x000004    0x000156      
                             0x002007    0x002008      
-            321 out of 8455 program addresses used, program memory utilization is 3%
-=======
-                            0x000004    0x00012f      
-                            0x002007    0x002008      
-            305 out of 8455 program addresses used, program memory utilization is 3%
->>>>>>> e0370640d34a1790af13b83025ae2c18bcdc66b7
+            344 out of 8455 program addresses used, program memory utilization is 4%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-<<<<<<< HEAD
-                  CHECK_H   0x0000ba    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  CHECK_L   0x0000b7    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             CHECK_RESULT   0x0000b0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-         CHECK_ZERO_CROSS   0x00012e    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             COMPARE_HIGH   0x0000a2    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-       COMPRESS_TO_1_BYTE   0x0000bd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-       END_INT_ZERO_CROSS   0x00013c    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  END_MAP   0x0000ff    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                  CHECK_H   0x0000bd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                  CHECK_L   0x0000ba    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+             CHECK_RESULT   0x0000b3    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+         CHECK_ZERO_CROSS   0x000145    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+             COMPARE_HIGH   0x0000a5    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+       COMPRESS_TO_1_BYTE   0x0000c0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+          END_COMPRESSION   0x0000d1    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+       END_INT_ZERO_CROSS   0x000153    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                  END_MAP   0x000116    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
             END_SELECTION   0x000093    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             FREQ_CATCHED   0x000111    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+             FREQ_CATCHED   0x000128    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
             GET_DEVIATION   0x000094    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 INC_FREQ   0x000126    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                 INC_FREQ   0x00013d    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                    INICIO   0x000005    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                      INT   0x000100    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                      INT   0x000117    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                      MAIN   0x000060    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                      MAP   0x0000cd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 NEGATIVE   0x0000db    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-               NEGATIVE_H   0x0000ac    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                      MAP   0x0000dc    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                 NEGATIVE   0x0000ea    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+               NEGATIVE_H   0x0000af    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                NEGATIVE_L   0x0000a0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 POSITIVE   0x0000ec    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+             OUT_OF_RANGE   0x0000cb    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                 POSITIVE   0x0000ff    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                  SELECT_A   0x000089    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                  SELECT_B   0x00007a    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                  SELECT_D   0x000084    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                 SELECT_E1   0x000075    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                 SELECT_E2   0x00008e    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                  SELECT_G   0x00007f    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                SEND_PORT   0x0000c5    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  SEND_TX   0x0000c3    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                SEND_PORT   0x0000d4    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                  SEND_TX   0x0000d2    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
          STRING_SELECTION   0x000066    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                    TUNED   0x0000fd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-=======
-                  CHECK_H   0x0000b2    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  CHECK_L   0x0000af    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             CHECK_RESULT   0x0000a8    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-         CHECK_ZERO_CROSS   0x00010d    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             COMPARE_HIGH   0x00009a    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-       COMPRESS_TO_1_BYTE   0x0000b5    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-       END_INT_ZERO_CROSS   0x00011b    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  END_MAP   0x0000ef    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-            END_SELECTION   0x00008b    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             FREQ_CATCHED   0x0000f0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-            GET_DEVIATION   0x00008c    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 INC_FREQ   0x000105    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                   INICIO   0x000005    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                      INT   0x00011f    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                     MAIN   0x000058    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                      MAP   0x0000c5    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 NEGATIVE   0x0000d3    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-               NEGATIVE_H   0x0000a4    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-               NEGATIVE_L   0x000098    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 POSITIVE   0x0000e0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 SELECT_A   0x000081    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 SELECT_B   0x000072    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 SELECT_D   0x00007c    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                SELECT_E1   0x00006d    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                SELECT_E2   0x000086    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 SELECT_G   0x000077    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                SEND_PORT   0x0000bd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  SEND_TX   0x0000bb    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-         STRING_SELECTION   0x00005e    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                    TUNED   0x0000ed    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
->>>>>>> e0370640d34a1790af13b83025ae2c18bcdc66b7
+                    TUNED   0x000114    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
 
 
 
@@ -109,7 +64,6 @@ Linker Map File - Created Mon Jun 10 17:03:52 2024
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
                    INICIO   0x000005    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-<<<<<<< HEAD
                      MAIN   0x000060    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
          STRING_SELECTION   0x000066    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                 SELECT_E1   0x000075    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
@@ -121,54 +75,25 @@ Linker Map File - Created Mon Jun 10 17:03:52 2024
             END_SELECTION   0x000093    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
             GET_DEVIATION   0x000094    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
                NEGATIVE_L   0x0000a0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             COMPARE_HIGH   0x0000a2    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-               NEGATIVE_H   0x0000ac    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             CHECK_RESULT   0x0000b0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  CHECK_L   0x0000b7    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  CHECK_H   0x0000ba    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-       COMPRESS_TO_1_BYTE   0x0000bd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  SEND_TX   0x0000c3    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                SEND_PORT   0x0000c5    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                      MAP   0x0000cd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 NEGATIVE   0x0000db    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 POSITIVE   0x0000ec    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                    TUNED   0x0000fd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  END_MAP   0x0000ff    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                      INT   0x000100    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             FREQ_CATCHED   0x000111    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 INC_FREQ   0x000126    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-         CHECK_ZERO_CROSS   0x00012e    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-       END_INT_ZERO_CROSS   0x00013c    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-=======
-                     MAIN   0x000058    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-         STRING_SELECTION   0x00005e    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                SELECT_E1   0x00006d    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 SELECT_B   0x000072    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 SELECT_G   0x000077    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 SELECT_D   0x00007c    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 SELECT_A   0x000081    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                SELECT_E2   0x000086    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-            END_SELECTION   0x00008b    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-            GET_DEVIATION   0x00008c    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-               NEGATIVE_L   0x000098    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             COMPARE_HIGH   0x00009a    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-               NEGATIVE_H   0x0000a4    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             CHECK_RESULT   0x0000a8    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  CHECK_L   0x0000af    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  CHECK_H   0x0000b2    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-       COMPRESS_TO_1_BYTE   0x0000b5    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  SEND_TX   0x0000bb    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                SEND_PORT   0x0000bd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                      MAP   0x0000c5    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 NEGATIVE   0x0000d3    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 POSITIVE   0x0000e0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                    TUNED   0x0000ed    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                  END_MAP   0x0000ef    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-             FREQ_CATCHED   0x0000f0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                 INC_FREQ   0x000105    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-         CHECK_ZERO_CROSS   0x00010d    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-       END_INT_ZERO_CROSS   0x00011b    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
-                      INT   0x00011f    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
->>>>>>> e0370640d34a1790af13b83025ae2c18bcdc66b7
+             COMPARE_HIGH   0x0000a5    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+               NEGATIVE_H   0x0000af    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+             CHECK_RESULT   0x0000b3    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                  CHECK_L   0x0000ba    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                  CHECK_H   0x0000bd    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+       COMPRESS_TO_1_BYTE   0x0000c0    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+             OUT_OF_RANGE   0x0000cb    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+          END_COMPRESSION   0x0000d1    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                  SEND_TX   0x0000d2    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                SEND_PORT   0x0000d4    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                      MAP   0x0000dc    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                 NEGATIVE   0x0000ea    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                 POSITIVE   0x0000ff    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                    TUNED   0x000114    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                  END_MAP   0x000116    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                      INT   0x000117    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+             FREQ_CATCHED   0x000128    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+                 INC_FREQ   0x00013d    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+         CHECK_ZERO_CROSS   0x000145    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
+       END_INT_ZERO_CROSS   0x000153    program     static C:\Users\emili\OneDrive\Escritorio\FACU\CUARTO AÑO\ED2\TPFinalED2\COSO.X\pics.asm
 
 
