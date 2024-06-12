@@ -77,6 +77,7 @@ LIST P=16F887
 #define SPREAD	.3		    ;si disminuyen aumentan presicion pero disminuyen rango
 #define STEP	.25		    ;el spred es el rango de frecuencias para arriba y para abajo que toma como afinado, sin estar
 				    ; ciertamente afinado
+#define	DELAY_Z_CROSS .2
     
     ORG 0x00
     GOTO INICIO
@@ -155,10 +156,9 @@ INICIO
     CLRF TRISD
     BANKSEL PORTB
   
-  ; RETARDO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+  ; RETARDO INICIAL (DEBE SER 0 PARA QUE PUEIDA INTERRUMPKIR EL TMR0)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     BANKSEL PORTB
-    MOVLW   .255
-    MOVWF   TIMER_Z_CROSS
+    CLRF  TIMER_Z_CROSS
     
    ;SELECTOR DE CUERDAS EN PUERTO B
     BANKSEL TRISB
@@ -385,7 +385,7 @@ SEND_TX
 SEND_PORT   
    BANKSEL PORTB
    CALL	MAP 
-   MOVF TUNING_OUTPUT, W
+   MOVF BUFFER_TO_TX, W
    BANKSEL PORTD
    MOVWF    PORTD
    
@@ -530,7 +530,12 @@ INC_FREQ
     INCF    FREQ_H, F
     CLRF    FREQ_L
     RETURN
-        
+DELAY
+    DECFSZ  TIMER_Z_CROSS, F
+    GOTO DELAY
+    CLRF TIMER_Z_CROSS
+    CALL INCF_FREQ
+    GOTO END_INT_ZERO_CROSS
      ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: CHECK_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;------- La rutina de interrupciones manda a este lugar cuando el comparador
     ;detectó un cruce por cero. Como en un periodo de 
@@ -538,17 +543,21 @@ INC_FREQ
     ;es necesario contar un unico cruce "cada dos cruces reales" para obtener
     ;una señal cuadrada de la misma frecuencia que la senoidal.
     ;---------------------------------------------------------------------------
-CHECK_ZERO_CROSS
     
+
+CHECK_ZERO_CROSS
+    BANKSEL PORTB
+    MOVF   TIMER_Z_CROSS, W
+    ADDLW   0X00
+    BTFSS   STATUS, Z
+    GOTO END_INT_ZERO_CROSS
     BANKSEL PIR2
     BTFSS PIR2, 5
     RETFIE
-    BANKSEL PORTA
-    DECFSZ CONTA_Z
-    GOTO END_INT_ZERO_CROSS
     BANKSEL PORTB
-    MOVLW   0x02
-    MOVWF   CONTA_Z
+    MOVLW   DELAY_Z_CROSS
+    MOVWF   TIMER_Z_CROSS
+    GOTO DELAY
     CALL INC_FREQ
     GOTO END_INT_ZERO_CROSS
     
