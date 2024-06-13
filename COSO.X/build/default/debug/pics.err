@@ -20,15 +20,15 @@ Warning[207] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\C
 Warning[207] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 37 : Found label after column 1. (TUNER_STEP)
 Warning[207] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 38 : Found label after column 1. (TUNER_STEP_2)
 Warning[207] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 39 : Found label after column 1. (TUNER_STEP_3)
-Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 133 : Register in operand not in bank 0.  Ensure that bank bits are correct.
 Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 134 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 136 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 138 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 141 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 155 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 135 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 137 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 139 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 142 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 156 : Register in operand not in bank 0.  Ensure that bank bits are correct.
 Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 166 : Register in operand not in bank 0.  Ensure that bank bits are correct.
 Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 168 : Register in operand not in bank 0.  Ensure that bank bits are correct.
 Message[302] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 181 : Register in operand not in bank 0.  Ensure that bank bits are correct.
 Message[305] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 507 : Using default destination of 1 (file).
-Message[305] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 547 : Using default destination of 1 (file).
-Warning[205] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 566 : Found directive in column 1. (END)
+Message[305] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 562 : Using default destination of 1 (file).
+Warning[205] C:\USERS\EMILI\ONEDRIVE\ESCRITORIO\FACU\CUARTO AÑO\ED2\TPFINALED2\COSO.X\PICS.ASM 581 : Found directive in column 1. (END)

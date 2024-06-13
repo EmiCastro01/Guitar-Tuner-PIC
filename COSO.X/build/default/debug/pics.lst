@@ -1,4 +1,4 @@
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  1
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ Warning[207]: Found label after column 1. (TUNING_STATUS_REGISTER)
   00000054            00024     TUNING_STATUS_REGISTER  EQU 0X54        ;REGISTRO DEL ESTADO DE LA ACTUAL AFINACION 
                       00025                                             ;[-,-,H_IS_TUNED,L_IS_TUNED,H_SUB_IS_NEGATIVE,L_SUB_IS_NEGAT
                             IVE,IS_HIGHER/LOWER,IS_TUNED]
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  2
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ Warning[207]: Found label after column 1. (TUNER_STEP_3)
                       00063 #define H_SUB_IS_NEGATIVE 3
                       00064 #define L_IS_TUNED 4
                       00065 #define H_IS_TUNED 5
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  3
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -134,155 +134,156 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00075 
                       00076 ;DEFINICIONES DE VALORES PARA EL MUESTREO POR EL PORTB
                       00077 #define SPREAD  .3                  ;si disminuyen aumentan presicion pero disminuyen rango
-                      00078 #define STEP    .25                 ;el spred es el rango de frecuencias para arriba y para abajo que to
+                      00078 #define STEP    .50                 ;el spred es el rango de frecuencias para arriba y para abajo que to
                             ma como afinado, sin estar
                       00079                                     ; ciertamente afinado
-                      00080     
-                      00081     ORG 0x00
-0000   2???           00082     GOTO INICIO
-                      00083 
-                      00084     ORG 0x04
-0004   2???           00085     GOTO INT
-                      00086     
-0005                  00087 INICIO
-                      00088     ;CARGA DE VALORES EN CUERDAS DE GUITARRA    valores estaticos y finales!!<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                      00080 #define DELAY_Z_CROSS .255          ; delay para la deteccion de cruce por cero
+                      00081     
+                      00082     ORG 0x00
+0000   2???           00083     GOTO INICIO
+                      00084 
+                      00085     ORG 0x04
+0004   2???           00086     GOTO INT
+                      00087     
+0005                  00088 INICIO
+                      00089     ;CARGA DE VALORES EN CUERDAS DE GUITARRA    valores estaticos y finales!!<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             <<
-                      00089     
-0005   1283 1303      00090     BANKSEL PORTB
-0007   304A           00091     MOVLW   0x4A
-0008   00A7           00092     MOVWF   E1_STR_L
-0009   3001           00093     MOVLW   0x01
-000A   00A8           00094     MOVWF   E1_STR_H
-000B   30F6           00095     MOVLW   0xF6
-000C   00A9           00096     MOVWF   B_STR_L
-000D   3000           00097     MOVLW   0x00
-000E   00AA           00098     MOVWF   B_STR_H
-000F   30C4           00099     MOVLW   0xC4
-0010   00AB           00100     MOVWF   G_STR_L
-0011   3000           00101     MOVLW   0x00
-0012   00AC           00102     MOVWF   G_STR_H
-0013   3092           00103     MOVLW   0x92
-0014   00AD           00104     MOVWF   D_STR_L
-0015   3000           00105     MOVLW   0x00
-0016   00AE           00106     MOVWF   D_STR_H
-0017   306E           00107     MOVLW   0x6E
-0018   00AF           00108     MOVWF   A_STR_L
-0019   3000           00109     MOVLW   0x00
-001A   00B0           00110     MOVWF   A_STR_H
-001B   3052           00111     MOVLW   0x52
-001C   00B1           00112     MOVWF   E2_STR_L
-001D   3000           00113     MOVLW   0x00
-001E   00B2           00114     MOVWF   E2_STR_H
-                      00115     
-                      00116    
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  4
+                      00090     
+0005   1283 1303      00091     BANKSEL PORTB
+0007   304A           00092     MOVLW   0x4A
+0008   00A7           00093     MOVWF   E1_STR_L
+0009   3001           00094     MOVLW   0x01
+000A   00A8           00095     MOVWF   E1_STR_H
+000B   30F6           00096     MOVLW   0xF6
+000C   00A9           00097     MOVWF   B_STR_L
+000D   3000           00098     MOVLW   0x00
+000E   00AA           00099     MOVWF   B_STR_H
+000F   30C4           00100     MOVLW   0xC4
+0010   00AB           00101     MOVWF   G_STR_L
+0011   3000           00102     MOVLW   0x00
+0012   00AC           00103     MOVWF   G_STR_H
+0013   3092           00104     MOVLW   0x92
+0014   00AD           00105     MOVWF   D_STR_L
+0015   3000           00106     MOVLW   0x00
+0016   00AE           00107     MOVWF   D_STR_H
+0017   306E           00108     MOVLW   0x6E
+0018   00AF           00109     MOVWF   A_STR_L
+0019   3000           00110     MOVLW   0x00
+001A   00B0           00111     MOVWF   A_STR_H
+001B   3052           00112     MOVLW   0x52
+001C   00B1           00113     MOVWF   E2_STR_L
+001D   3000           00114     MOVLW   0x00
+001E   00B2           00115     MOVWF   E2_STR_H
+                      00116     
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00117     
-                      00118     ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                      00119     
-                      00120     ;ASIGNACION DE VALORES DE STEP
-001F   3019           00121     MOVLW   STEP
-0020   00D8           00122     MOVWF   TUNER_STEP
-0021   3019           00123     MOVLW   STEP
-0022   0758           00124     ADDWF   TUNER_STEP, W
-0023   00D9           00125     MOVWF   TUNER_STEP_2
-0024   3019           00126     MOVLW   STEP
-0025   0759           00127     ADDWF   TUNER_STEP_2, W
-0026   00DA           00128     MOVWF   TUNER_STEP_3
-                      00129     ;En esta asignacion genero un paso de lo que diga en la definicion de step para los tres leds.
-                      00130     
-                      00131     ;COMPARADOR ANALOGICO (CRUCES POR 0)<<<<<<<<<<<<<<<<<<<<<<<<<<<
-0027   1683 1303      00132     BANKSEL TRISA
+                      00117    
+                      00118     
+                      00119     ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                      00120     
+                      00121     ;ASIGNACION DE VALORES DE STEP
+001F   3032           00122     MOVLW   STEP
+0020   00D8           00123     MOVWF   TUNER_STEP
+0021   3032           00124     MOVLW   STEP
+0022   0758           00125     ADDWF   TUNER_STEP, W
+0023   00D9           00126     MOVWF   TUNER_STEP_2
+0024   3032           00127     MOVLW   STEP
+0025   0759           00128     ADDWF   TUNER_STEP_2, W
+0026   00DA           00129     MOVWF   TUNER_STEP_3
+                      00130     ;En esta asignacion genero un paso de lo que diga en la definicion de step para los tres leds.
+                      00131     
+                      00132     ;COMPARADOR ANALOGICO (CRUCES POR 0)<<<<<<<<<<<<<<<<<<<<<<<<<<<
+0027   1683 1303      00133     BANKSEL TRISA
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0029   1405           00133     BSF TRISA, 0
+0029   1405           00134     BSF TRISA, 0
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-002A   1585           00134     BSF TRISA, 3
-002B   1683 1703      00135     BANKSEL ANSEL
+002A   1585           00135     BSF TRISA, 3
+002B   1683 1703      00136     BANKSEL ANSEL
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-002D   1588           00136     BSF ANSEL, 3
-002E   1283 1703      00137     BANKSEL CM1CON0
+002D   1588           00137     BSF ANSEL, 3
+002E   1283 1703      00138     BANKSEL CM1CON0
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0030   1787           00138     BSF CM1CON0, 7
-0031   1683 1303      00139     BANKSEL PIE2
-0033   3020           00140     MOVLW   B'00100000'
+0030   1787           00139     BSF CM1CON0, 7
+0031   1683 1303      00140     BANKSEL PIE2
+0033   3020           00141     MOVLW   B'00100000'
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0034   008D           00141     MOVWF   PIE2
-                      00142     ; --------------------------------------------
-                      00143     ; -----------------------------------------------
-0035   1283 1303      00144     BANKSEL PORTA
-0037   3002           00145     MOVLW   0X02
-0038   00A4           00146     MOVWF   CONTA_Z             
-0039   01A2           00147     CLRF FREQ_L
-003A   01A3           00148     CLRF FREQ_H
-003B   01A5           00149     CLRF FREQ_L_TO_COMPARE
-003C   01A6           00150     CLRF FREQ_H_TO_COMPARE
-003D   3010           00151     MOVLW .16
-003E   00A1           00152     MOVWF CONTA
-003F   01A0           00153     CLRF AUX
-0040   1683 1303      00154     BANKSEL TRISD
+0034   008D           00142     MOVWF   PIE2
+                      00143     ; --------------------------------------------
+                      00144     ; -----------------------------------------------
+0035   1283 1303      00145     BANKSEL PORTA
+0037   3002           00146     MOVLW   0X02
+0038   00A4           00147     MOVWF   CONTA_Z             
+0039   01A2           00148     CLRF FREQ_L
+003A   01A3           00149     CLRF FREQ_H
+003B   01A5           00150     CLRF FREQ_L_TO_COMPARE
+003C   01A6           00151     CLRF FREQ_H_TO_COMPARE
+003D   3010           00152     MOVLW .16
+003E   00A1           00153     MOVWF CONTA
+003F   01A0           00154     CLRF AUX
+0040   1683 1303      00155     BANKSEL TRISD
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0042   0188           00155     CLRF TRISD
-0043   1283 1303      00156     BANKSEL PORTB
-                      00157   
-                      00158   ; RETARDO <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-0045   1283 1303      00159     BANKSEL PORTB
-0047   30FF           00160     MOVLW   .255
-0048   00C0           00161     MOVWF   TIMER_Z_CROSS
+0042   0188           00156     CLRF TRISD
+0043   1283 1303      00157     BANKSEL PORTB
+                      00158   
+                      00159   ; RETARDO INICIAL (DEBE SER 0 PARA QUE PUEIDA INTERRUMPKIR EL TMR0)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                            <<<<<<<
+0045   1283 1303      00160     BANKSEL PORTB
+0047   01C0           00161     CLRF  TIMER_Z_CROSS
                       00162     
-                      00163    ;SELECTOR DE CUERDAS EN PUERTO B
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  5
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0049   1683 1303      00164     BANKSEL TRISB
-004B   30FF           00165     MOVLW   0XFF
+                      00163    ;SELECTOR DE CUERDAS EN PUERTO B
+0048   1683 1303      00164     BANKSEL TRISB
+004A   30FF           00165     MOVLW   0XFF
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-004C   0086           00166     MOVWF   TRISB
-004D   1683 1703      00167     BANKSEL ANSELH
+004B   0086           00166     MOVWF   TRISB
+004C   1683 1703      00167     BANKSEL ANSELH
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-004F   0189           00168     CLRF ANSELH
+004E   0189           00168     CLRF ANSELH
                       00169   ; TMR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-0050   1283 1303      00170     BANKSEL TMR1H
-0052   300B           00171     MOVLW 0x0B
-0053   008F           00172     MOVWF TMR1H
-0054   30DC           00173     MOVLW 0xDC
-0055   008E           00174     MOVWF TMR1L
+004F   1283 1303      00170     BANKSEL TMR1H
+0051   300B           00171     MOVLW 0x0B
+0052   008F           00172     MOVWF TMR1H
+0053   30DC           00173     MOVLW 0xDC
+0054   008E           00174     MOVWF TMR1L
                       00175     
-0056   1283 1303      00176     BANKSEL T1CON
-0058   3011           00177     MOVLW b'00010001' 
-0059   0090           00178     MOVWF T1CON
+0055   1283 1303      00176     BANKSEL T1CON
+0057   3011           00177     MOVLW b'00010001' 
+0058   0090           00178     MOVWF T1CON
                       00179     
-005A   1683 1303      00180     BANKSEL PIE1
+0059   1683 1303      00180     BANKSEL PIE1
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-005C   140C           00181     BSF PIE1, TMR1IE 
+005B   140C           00181     BSF PIE1, TMR1IE 
                       00182     
                       00183     
                       00184     ;-------------------------------------------------------
                       00185     
-005D   30C0           00186     MOVLW b'11000000'
-005E   008B           00187     MOVWF INTCON 
+005C   30C0           00186     MOVLW b'11000000'
+005D   008B           00187     MOVWF INTCON 
                       00188     
                       00189    
                       00190     
-005F   2???           00191     GOTO MAIN
+005E   2???           00191     GOTO MAIN
                       00192 ;MAIN MAIN MAIN MAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN
                              MAIN MAINMAIN MAIN MAINMAIN MAIN MAIN
                       00193 ;MAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN MAIN MAINMAIN 
                             MAIN MAINMAIN MAIN MAIN
                       00194 
-0060                  00195 MAIN
-0060   2???           00196    CALL STRING_SELECTION
-0061   2???           00197    CALL GET_DEVIATION
-0062   2???           00198    CALL COMPRESS_TO_1_BYTE                 
-0063   2???           00199    CALL SEND_TX
-0064   2???           00200    CALL SEND_PORT
-0065   2???           00201    GOTO MAIN
+005F                  00195 MAIN
+005F   2???           00196    CALL STRING_SELECTION
+0060   2???           00197    CALL GET_DEVIATION
+0061   2???           00198    CALL COMPRESS_TO_1_BYTE                 
+0062   2???           00199    CALL SEND_TX
+0063   2???           00200    CALL SEND_PORT
+0064   2???           00201    GOTO MAIN
                       00202 
                       00203 
                       00204 ;FIN MAIN FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN    FIN MAIN  
@@ -292,79 +293,79 @@ Message[302]: Register in operand not in bank 0.  Ensure that bank bits are corr
                       00206    
                       00207   
                       00208 ;-----------------------------  STRING_ELECTION--------------------------------->>>>>>>>>>>>>>>>>>>>>>>
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
                       00209    ;ACA HACER LA LOGICA PARA SELECCIONAR LA CUERDA A AFINAR
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  6
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-0066                  00210 STRING_SELECTION
-0066   1283 1303      00211    BANKSEL PORTB
-0068   1806           00212    BTFSC    PORTB, 0
-0069   2???           00213    GOTO     SELECT_E1
-006A   1886           00214    BTFSC    PORTB,1
-006B   2???           00215    GOTO SELECT_B
-006C   1906           00216    BTFSC    PORTB,2
-006D   2???           00217    GOTO SELECT_G
-006E   1986           00218    BTFSC    PORTB, 3
-006F   2???           00219    GOTO SELECT_D
-0070   1A06           00220    BTFSC    PORTB, 4
-0071   2???           00221    GOTO SELECT_A
-0072   1B06           00222    BTFSC    PORTB, 6
-0073   2???           00223    GOTO SELECT_E2
-0074   2???           00224    GOTO END_SELECTION
+0065                  00210 STRING_SELECTION
+0065   1283 1303      00211    BANKSEL PORTB
+0067   1806           00212    BTFSC    PORTB, 0
+0068   2???           00213    GOTO     SELECT_E1
+0069   1886           00214    BTFSC    PORTB,1
+006A   2???           00215    GOTO SELECT_B
+006B   1906           00216    BTFSC    PORTB,2
+006C   2???           00217    GOTO SELECT_G
+006D   1986           00218    BTFSC    PORTB, 3
+006E   2???           00219    GOTO SELECT_D
+006F   1A06           00220    BTFSC    PORTB, 4
+0070   2???           00221    GOTO SELECT_A
+0071   1B06           00222    BTFSC    PORTB, 6
+0072   2???           00223    GOTO SELECT_E2
+0073   2???           00224    GOTO END_SELECTION
                       00225 
-0075                  00226 SELECT_E1
-0075   0827           00227     MOVF    E1_STR_L, W
-0076   00D0           00228     MOVWF   TUNING_STR_L
-0077   0828           00229     MOVF    E1_STR_H, W
-0078   00D1           00230     MOVWF   TUNING_STR_H
-0079   2???           00231     GOTO END_SELECTION
+0074                  00226 SELECT_E1
+0074   0827           00227     MOVF    E1_STR_L, W
+0075   00D0           00228     MOVWF   TUNING_STR_L
+0076   0828           00229     MOVF    E1_STR_H, W
+0077   00D1           00230     MOVWF   TUNING_STR_H
+0078   2???           00231     GOTO END_SELECTION
                       00232    
-007A                  00233 SELECT_B
-007A   0829           00234     MOVF    B_STR_L, W
-007B   00D0           00235     MOVWF   TUNING_STR_L
-007C   082A           00236     MOVF    B_STR_H, W
-007D   00D1           00237     MOVWF   TUNING_STR_H
-007E   2???           00238     GOTO END_SELECTION
+0079                  00233 SELECT_B
+0079   0829           00234     MOVF    B_STR_L, W
+007A   00D0           00235     MOVWF   TUNING_STR_L
+007B   082A           00236     MOVF    B_STR_H, W
+007C   00D1           00237     MOVWF   TUNING_STR_H
+007D   2???           00238     GOTO END_SELECTION
                       00239    
-007F                  00240 SELECT_G
-007F   082B           00241     MOVF    G_STR_L, W
-0080   00D0           00242     MOVWF   TUNING_STR_L
-0081   082C           00243     MOVF    G_STR_H, W
-0082   00D1           00244     MOVWF   TUNING_STR_H   
-0083   2???           00245     GOTO END_SELECTION
+007E                  00240 SELECT_G
+007E   082B           00241     MOVF    G_STR_L, W
+007F   00D0           00242     MOVWF   TUNING_STR_L
+0080   082C           00243     MOVF    G_STR_H, W
+0081   00D1           00244     MOVWF   TUNING_STR_H   
+0082   2???           00245     GOTO END_SELECTION
                       00246    
-0084                  00247 SELECT_D
-0084   082D           00248     MOVF    D_STR_L, W
-0085   00D0           00249     MOVWF   TUNING_STR_L
-0086   082E           00250     MOVF    D_STR_H, W
-0087   00D1           00251     MOVWF   TUNING_STR_H
-0088   2???           00252     GOTO END_SELECTION
+0083                  00247 SELECT_D
+0083   082D           00248     MOVF    D_STR_L, W
+0084   00D0           00249     MOVWF   TUNING_STR_L
+0085   082E           00250     MOVF    D_STR_H, W
+0086   00D1           00251     MOVWF   TUNING_STR_H
+0087   2???           00252     GOTO END_SELECTION
                       00253     
-0089                  00254 SELECT_A
-0089   082F           00255     MOVF    A_STR_L, W
-008A   00D0           00256     MOVWF   TUNING_STR_L
-008B   0830           00257     MOVF    A_STR_H, W
-008C   00D1           00258     MOVWF   TUNING_STR_H
-008D   2???           00259     GOTO END_SELECTION
+0088                  00254 SELECT_A
+0088   082F           00255     MOVF    A_STR_L, W
+0089   00D0           00256     MOVWF   TUNING_STR_L
+008A   0830           00257     MOVF    A_STR_H, W
+008B   00D1           00258     MOVWF   TUNING_STR_H
+008C   2???           00259     GOTO END_SELECTION
                       00260     
-008E                  00261 SELECT_E2
-008E   0831           00262     MOVF    E2_STR_L, W
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  7
+008D                  00261 SELECT_E2
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-008F   00D0           00263     MOVWF   TUNING_STR_L
-0090   0832           00264     MOVF    E2_STR_H, W
-0091   00D1           00265     MOVWF   TUNING_STR_H
-0092   2???           00266     GOTO END_SELECTION
+008D   0831           00262     MOVF    E2_STR_L, W
+008E   00D0           00263     MOVWF   TUNING_STR_L
+008F   0832           00264     MOVF    E2_STR_H, W
+0090   00D1           00265     MOVWF   TUNING_STR_H
+0091   2???           00266     GOTO END_SELECTION
                       00267     
-0093                  00268 END_SELECTION   
-0093   0008           00269    RETURN
+0092                  00268 END_SELECTION   
+0092   0008           00269    RETURN
                       00270    
                       00271 ; _-----------------------------------------------------------------------------------------------------
                             ----------
@@ -379,74 +380,74 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00279 ;-------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                             >>>>>>>>
                       00280 
-0094                  00281 GET_DEVIATION
-0094   01A0           00282     CLRF AUX
-0095   01D4           00283     CLRF TUNING_STATUS_REGISTER
-0096   0825           00284     MOVF FREQ_L_TO_COMPARE, W
-0097   0250           00285     SUBWF TUNING_STR_L, W
-0098   1903           00286     BTFSC STATUS, Z
-0099   1654           00287     BSF TUNING_STATUS_REGISTER, L_IS_TUNED
-009A   1C03           00288     BTFSS STATUS, C
-009B   1554           00289     BSF TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE
-009C   00D2           00290     MOVWF DIF_FREQ_L
+0093                  00281 GET_DEVIATION
+0093   01A0           00282     CLRF AUX
+0094   01D4           00283     CLRF TUNING_STATUS_REGISTER
+0095   0825           00284     MOVF FREQ_L_TO_COMPARE, W
+0096   0250           00285     SUBWF TUNING_STR_L, W
+0097   1903           00286     BTFSC STATUS, Z
+0098   1654           00287     BSF TUNING_STATUS_REGISTER, L_IS_TUNED
+0099   1C03           00288     BTFSS STATUS, C
+009A   1554           00289     BSF TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE
+009B   00D2           00290     MOVWF DIF_FREQ_L
                       00291     
-009D   1954           00292     BTFSC TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE
-009E   2???           00293     GOTO NEGATIVE_L
-009F   2???           00294     GOTO COMPARE_HIGH
+009C   1954           00292     BTFSC TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE
+009D   2???           00293     GOTO NEGATIVE_L
+009E   2???           00294     GOTO COMPARE_HIGH
                       00295 
                       00296     
                       00297 
-00A0                  00298 NEGATIVE_L
-00A0   1851           00299     BTFSC   TUNING_STR_H, 0
-00A1   2???           00300     GOTO COMPARE_HIGH
-00A2   0850           00301     MOVF   TUNING_STR_L, W
-00A3   0225           00302     SUBWF   FREQ_L_TO_COMPARE, W
-00A4   00D2           00303     MOVWF   DIF_FREQ_L
+009F                  00298 NEGATIVE_L
+009F   1851           00299     BTFSC   TUNING_STR_H, 0
+00A0   2???           00300     GOTO COMPARE_HIGH
+00A1   0850           00301     MOVF   TUNING_STR_L, W
+00A2   0225           00302     SUBWF   FREQ_L_TO_COMPARE, W
+00A3   00D2           00303     MOVWF   DIF_FREQ_L
                       00304 
-00A5                  00305 COMPARE_HIGH
+00A4                  00305 COMPARE_HIGH
                       00306  
-00A5   0826           00307     MOVF FREQ_H_TO_COMPARE, W
-00A6   0251           00308     SUBWF TUNING_STR_H, W
-00A7   1903           00309     BTFSC STATUS, Z
-00A8   16D4           00310     BSF TUNING_STATUS_REGISTER, H_IS_TUNED
-00A9   1C03           00311     BTFSS STATUS, C
-00AA   15D4           00312     BSF TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  8
+00A4   0826           00307     MOVF FREQ_H_TO_COMPARE, W
+00A5   0251           00308     SUBWF TUNING_STR_H, W
+00A6   1903           00309     BTFSC STATUS, Z
+00A7   16D4           00310     BSF TUNING_STATUS_REGISTER, H_IS_TUNED
+00A8   1C03           00311     BTFSS STATUS, C
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00AB   00D3           00313     MOVWF DIF_FREQ_H 
+00A9   15D4           00312     BSF TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE
+00AA   00D3           00313     MOVWF DIF_FREQ_H 
                       00314 
-00AC   19D4           00315     BTFSC TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE
-00AD   2???           00316     GOTO NEGATIVE_H
-00AE   2???           00317     GOTO CHECK_RESULT
+00AB   19D4           00315     BTFSC TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE
+00AC   2???           00316     GOTO NEGATIVE_H
+00AD   2???           00317     GOTO CHECK_RESULT
                       00318 
-00AF                  00319 NEGATIVE_H
-00AF   09D3           00320     COMF DIF_FREQ_H, F
-00B0   0AD3           00321     INCF DIF_FREQ_H, F
-00B1   09D2           00322     COMF DIF_FREQ_L, F
-00B2   0AD2           00323     INCF DIF_FREQ_L, F
+00AE                  00319 NEGATIVE_H
+00AE   09D3           00320     COMF DIF_FREQ_H, F
+00AF   0AD3           00321     INCF DIF_FREQ_H, F
+00B0   09D2           00322     COMF DIF_FREQ_L, F
+00B1   0AD2           00323     INCF DIF_FREQ_L, F
                       00324 
-00B3                  00325 CHECK_RESULT
-00B3   1A54           00326     BTFSC TUNING_STATUS_REGISTER, L_IS_TUNED
-00B4   2???           00327     CALL CHECK_H
-00B5   19D4           00328     BTFSC TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE 
-00B6   14D4           00329     BSF TUNING_STATUS_REGISTER, IS_HIGHER_LOWER   
-00B7   1954           00330     BTFSC TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE 
-00B8   2???           00331     CALL CHECK_L
-00B9   0008           00332     RETURN
+00B2                  00325 CHECK_RESULT
+00B2   1A54           00326     BTFSC TUNING_STATUS_REGISTER, L_IS_TUNED
+00B3   2???           00327     CALL CHECK_H
+00B4   19D4           00328     BTFSC TUNING_STATUS_REGISTER, H_SUB_IS_NEGATIVE 
+00B5   14D4           00329     BSF TUNING_STATUS_REGISTER, IS_HIGHER_LOWER   
+00B6   1954           00330     BTFSC TUNING_STATUS_REGISTER, L_SUB_IS_NEGATIVE 
+00B7   2???           00331     CALL CHECK_L
+00B8   0008           00332     RETURN
                       00333 
-00BA                  00334 CHECK_L
-00BA   1AD4           00335     BTFSC   TUNING_STATUS_REGISTER, H_IS_TUNED
-00BB   14D4           00336     BSF TUNING_STATUS_REGISTER, IS_HIGHER_LOWER
-00BC   0008           00337     RETURN
+00B9                  00334 CHECK_L
+00B9   1AD4           00335     BTFSC   TUNING_STATUS_REGISTER, H_IS_TUNED
+00BA   14D4           00336     BSF TUNING_STATUS_REGISTER, IS_HIGHER_LOWER
+00BB   0008           00337     RETURN
                       00338 
-00BD                  00339 CHECK_H
-00BD   1AD4           00340     BTFSC   TUNING_STATUS_REGISTER, H_IS_TUNED
-00BE   1454           00341     BSF TUNING_STATUS_REGISTER, IS_TUNED
-00BF   0008           00342     RETURN
+00BC                  00339 CHECK_H
+00BC   1AD4           00340     BTFSC   TUNING_STATUS_REGISTER, H_IS_TUNED
+00BD   1454           00341     BSF TUNING_STATUS_REGISTER, IS_TUNED
+00BE   0008           00342     RETURN
                       00343 ;-------------------------------------------FIN ETAPA COMPARACION---------------------------------------
                             -----------------
                       00344      
@@ -459,167 +460,167 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00348     ;   En 1 byte (buffer) se comprimen los valores del DIF_FREQ_x en 7 bits (menos significativos), y e
                             l octavo bit
                       00349     ; indica si la desviacion es hacia la derecha o izquierda.
-00C0                  00350 COMPRESS_TO_1_BYTE
-00C0   01D5           00351    CLRF BUFFER_TO_TX                ;LIMPIAR EL BUFFER
-00C1   0852           00352    MOVF DIF_FREQ_L, W               ; SOLO MANDAMOS LA PARTE BAJA DE LA DESVIACION
-00C2   00D5           00353    MOVWF BUFFER_TO_TX   
-00C3   0855           00354    MOVF BUFFER_TO_TX, W
-00C4   3C7F           00355    SUBLW    b'01111111'         ;En el caso de que el valor sea mayor a 127, el byte se pone todo en alt
+00BF                  00350 COMPRESS_TO_1_BYTE
+00BF   01D5           00351    CLRF BUFFER_TO_TX                ;LIMPIAR EL BUFFER
+00C0   0852           00352    MOVF DIF_FREQ_L, W               ; SOLO MANDAMOS LA PARTE BAJA DE LA DESVIACION
+00C1   00D5           00353    MOVWF BUFFER_TO_TX   
+00C2   0855           00354    MOVF BUFFER_TO_TX, W
+00C3   3C7F           00355    SUBLW    b'01111111'         ;En el caso de que el valor sea mayor a 127, el byte se pone todo en alt
                             o indicando exceso de desviacion
-00C5   1C03           00356    BTFSS    STATUS, C
-00C6   2???           00357    GOTO OUT_OF_RANGE
-00C7   13D5           00358    BCF  BUFFER_TO_TX, 7
-00C8   18D4           00359    BTFSC    TUNING_STATUS_REGISTER, IS_HIGHER_LOWER         ;1 SI HIGHER
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE  9
+00C4   1C03           00356    BTFSS    STATUS, C
+00C5   2???           00357    GOTO OUT_OF_RANGE
+00C6   13D5           00358    BCF  BUFFER_TO_TX, 7
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00C9   17D5           00360    BSF  BUFFER_TO_TX, 7
-00CA   2???           00361    GOTO END_COMPRESSION
+00C7   18D4           00359    BTFSC    TUNING_STATUS_REGISTER, IS_HIGHER_LOWER         ;1 SI HIGHER
+00C8   17D5           00360    BSF  BUFFER_TO_TX, 7
+00C9   2???           00361    GOTO END_COMPRESSION
                       00362 
                       00363    
-00CB                  00364 OUT_OF_RANGE                                ;esto le saca al afinador la posibilidad de detectar una des
+00CA                  00364 OUT_OF_RANGE                                ;esto le saca al afinador la posibilidad de detectar una des
                             afinacion de 127 Hz, pero le da la posibilidad de detectar si esta fuera de rango
-00CB   30FF           00365    MOVLW    0XFF
-00CC   00D5           00366    MOVWF    BUFFER_TO_TX
-00CD   13D5           00367    BCF      BUFFER_TO_TX, 7
-00CE   18D4           00368    BTFSC    TUNING_STATUS_REGISTER, IS_HIGHER_LOWER         
-00CF   17D5           00369    BSF  BUFFER_TO_TX, 7
-00D0   2???           00370    GOTO END_COMPRESSION
+00CA   30FF           00365    MOVLW    0XFF
+00CB   00D5           00366    MOVWF    BUFFER_TO_TX
+00CC   13D5           00367    BCF      BUFFER_TO_TX, 7
+00CD   18D4           00368    BTFSC    TUNING_STATUS_REGISTER, IS_HIGHER_LOWER         
+00CE   17D5           00369    BSF  BUFFER_TO_TX, 7
+00CF   2???           00370    GOTO END_COMPRESSION
                       00371    
-00D1                  00372 END_COMPRESSION
-00D1   0008           00373    RETURN
+00D0                  00372 END_COMPRESSION
+00D0   0008           00373    RETURN
                       00374  ;---------------------------------SEND_TX<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             <<<
                       00375  ;Subrutina de transmision serie. Carga el buffer en TXREG (BUFFER_TO_TX)
                       00376  
-00D2                  00377 SEND_TX
-00D2   0000           00378     NOP
-00D3   0008           00379    RETURN
+00D1                  00377 SEND_TX
+00D1   0000           00378     NOP
+00D2   0008           00379    RETURN
                       00380    
                       00381 ;---------------------------------------------------------------------------------------------------
                       00382 ;-----------------------------SEND PORT->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                       00383  ; muestra resultados en puertos con la logica del afinador
                       00384  
-00D4                  00385 SEND_PORT   
-00D4   1283 1303      00386    BANKSEL PORTB
-00D6   2???           00387    CALL MAP 
-00D7   0856           00388    MOVF TUNING_OUTPUT, W
-00D8   1283 1303      00389    BANKSEL PORTD
-00DA   0088           00390    MOVWF    PORTD
+00D3                  00385 SEND_PORT   
+00D3   1283 1303      00386    BANKSEL PORTB
+00D5   2???           00387    CALL MAP 
+00D6   0856           00388    MOVF TUNING_OUTPUT, W
+00D7   1283 1303      00389    BANKSEL PORTD
+00D9   0088           00390    MOVWF    PORTD
                       00391    
-00DB   0008           00392    RETURN 
+00DA   0008           00392    RETURN 
                       00393 ;----------------------------MAP: Subrutinba de Send_port<<<<<<<<<<<<
                       00394    ; Mapea los valores del buffer a valores que pueden ser mostrados en 7 leds. 3 para un sentido de afi
                             nacion
                       00395    ; 3 para el otro y uno que indica si la cuerda esta afinada. El valor de step es de .21
                       00396    ;utiliza una mascara para desligarse del bit de orientacion (0x7F)
-00DC                  00397 MAP
-00DC   1283 1303      00398    BANKSEL PORTB
-00DE   01D7           00399     CLRF BUFFER_MASK
-00DF   01D6           00400     CLRF TUNING_OUTPUT
-00E0   0855           00401     MOVF    BUFFER_TO_TX, W
-00E1   00D7           00402     MOVWF   BUFFER_MASK                 ;TRABAJA CON LA MASCARA
-00E2   307F           00403     MOVLW   0X7F
-00E3   05D7           00404     ANDWF   BUFFER_MASK, F
-00E4   1903           00405     BTFSC STATUS, Z    
-00E5   2???           00406     GOTO TUNED      
-00E6   1BD5           00407     BTFSC BUFFER_TO_TX, 7
-00E7   2???           00408     GOTO NEGATIVE      
-00E8   2???           00409     GOTO POSITIVE    
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 10
+00DB                  00397 MAP
+00DB   1283 1303      00398    BANKSEL PORTB
+00DD   01D7           00399     CLRF BUFFER_MASK
+00DE   01D6           00400     CLRF TUNING_OUTPUT
+00DF   0855           00401     MOVF    BUFFER_TO_TX, W
+00E0   00D7           00402     MOVWF   BUFFER_MASK                 ;TRABAJA CON LA MASCARA
+00E1   307F           00403     MOVLW   0X7F
+00E2   05D7           00404     ANDWF   BUFFER_MASK, F
+00E3   1903           00405     BTFSC STATUS, Z    
+00E4   2???           00406     GOTO TUNED      
+00E5   1BD5           00407     BTFSC BUFFER_TO_TX, 7
+00E6   2???           00408     GOTO NEGATIVE      
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00E9   2???           00410     GOTO END_MAP
+00E7   2???           00409     GOTO POSITIVE    
+00E8   2???           00410     GOTO END_MAP
                       00411 
                       00412 
-00EA                  00413 NEGATIVE
-00EA   307F           00414     MOVLW   0X7F
-00EB   0257           00415     SUBWF   BUFFER_MASK, W
-00EC   1903           00416     BTFSC   STATUS, Z
-00ED   1456           00417     BSF TUNING_OUTPUT, NEG_TUNE_2_LED       ;CASO OUT OF RANGE
-00EE   3003           00418     MOVLW SPREAD
-00EF   0257           00419     SUBWF   BUFFER_MASK, W
-00F0   1C03           00420     BTFSS STATUS, C
-00F1   2???           00421     GOTO TUNED                          ;SPREAD DE AFINACION NEGATIVA
-00F2   0858           00422     MOVF TUNER_STEP, W
-00F3   0257           00423     SUBWF   BUFFER_MASK, W
-00F4   1C03           00424     BTFSS   STATUS, C
-00F5   1556           00425     BSF TUNING_OUTPUT, NEG_TUNE_0_LED
-00F6   0859           00426     MOVF TUNER_STEP_2, W
-00F7   0257           00427     SUBWF   BUFFER_MASK, W
-00F8   1C03           00428     BTFSS   STATUS, C
-00F9   14D6           00429     BSF TUNING_OUTPUT, NEG_TUNE_1_LED
-00FA   085A           00430     MOVF TUNER_STEP_3, W
-00FB   0257           00431     SUBWF   BUFFER_MASK, W
-00FC   1C03           00432     BTFSS   STATUS, C
-00FD   1456           00433     BSF TUNING_OUTPUT, NEG_TUNE_2_LED
-00FE   2???           00434     GOTO END_MAP
+00E9                  00413 NEGATIVE
+00E9   307F           00414     MOVLW   0X7F
+00EA   0257           00415     SUBWF   BUFFER_MASK, W
+00EB   1903           00416     BTFSC   STATUS, Z
+00EC   1456           00417     BSF TUNING_OUTPUT, NEG_TUNE_2_LED       ;CASO OUT OF RANGE
+00ED   3003           00418     MOVLW SPREAD
+00EE   0257           00419     SUBWF   BUFFER_MASK, W
+00EF   1C03           00420     BTFSS STATUS, C
+00F0   2???           00421     GOTO TUNED                          ;SPREAD DE AFINACION NEGATIVA
+00F1   0858           00422     MOVF TUNER_STEP, W
+00F2   0257           00423     SUBWF   BUFFER_MASK, W
+00F3   1C03           00424     BTFSS   STATUS, C
+00F4   1556           00425     BSF TUNING_OUTPUT, NEG_TUNE_0_LED
+00F5   0859           00426     MOVF TUNER_STEP_2, W
+00F6   0257           00427     SUBWF   BUFFER_MASK, W
+00F7   1C03           00428     BTFSS   STATUS, C
+00F8   14D6           00429     BSF TUNING_OUTPUT, NEG_TUNE_1_LED
+00F9   085A           00430     MOVF TUNER_STEP_3, W
+00FA   0257           00431     SUBWF   BUFFER_MASK, W
+00FB   1C03           00432     BTFSS   STATUS, C
+00FC   1456           00433     BSF TUNING_OUTPUT, NEG_TUNE_2_LED
+00FD   2???           00434     GOTO END_MAP
                       00435 
-00FF                  00436 POSITIVE
-00FF   307F           00437     MOVLW   0X7F
-0100   0257           00438     SUBWF   BUFFER_MASK, W
-0101   1903           00439     BTFSC   STATUS, Z
-0102   1756           00440     BSF TUNING_OUTPUT, POS_TUNE_2_LED       ;CASO OUT OF RANGE
-0103   3003           00441     MOVLW SPREAD
-0104   0257           00442     SUBWF   BUFFER_MASK, W
-0105   1C03           00443     BTFSS STATUS, C
-0106   2???           00444     GOTO TUNED                          ;SPREAD DE AFINACION POSITIVA
-0107   0858           00445     MOVF TUNER_STEP, W
-0108   0257           00446     SUBWF   BUFFER_MASK, W
-0109   1C03           00447     BTFSS   STATUS, C
-010A   1656           00448     BSF TUNING_OUTPUT, POS_TUNE_0_LED
-010B   0859           00449     MOVF TUNER_STEP_2, W
-010C   0257           00450     SUBWF   BUFFER_MASK, W
-010D   1C03           00451     BTFSS   STATUS, C
-010E   16D6           00452     BSF TUNING_OUTPUT, POS_TUNE_1_LED
-010F   085A           00453     MOVF TUNER_STEP_3, W
-0110   0257           00454     SUBWF   BUFFER_MASK, W
-0111   1C03           00455     BTFSS   STATUS, C
-0112   1756           00456     BSF TUNING_OUTPUT, POS_TUNE_2_LED
-0113   2???           00457     GOTO END_MAP
-0114                  00458 TUNED
-0114   15D6           00459     BSF TUNING_OUTPUT, IN_TUNE_LED
-0115   2???           00460     GOTO END_MAP
-0116                  00461 END_MAP
-0116   0008           00462     RETURN
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 11
+00FE                  00436 POSITIVE
+00FE   307F           00437     MOVLW   0X7F
+00FF   0257           00438     SUBWF   BUFFER_MASK, W
+0100   1903           00439     BTFSC   STATUS, Z
+0101   1756           00440     BSF TUNING_OUTPUT, POS_TUNE_2_LED       ;CASO OUT OF RANGE
+0102   3003           00441     MOVLW SPREAD
+0103   0257           00442     SUBWF   BUFFER_MASK, W
+0104   1C03           00443     BTFSS STATUS, C
+0105   2???           00444     GOTO TUNED                          ;SPREAD DE AFINACION POSITIVA
+0106   0858           00445     MOVF TUNER_STEP, W
+0107   0257           00446     SUBWF   BUFFER_MASK, W
+0108   1C03           00447     BTFSS   STATUS, C
+0109   1656           00448     BSF TUNING_OUTPUT, POS_TUNE_0_LED
+010A   0859           00449     MOVF TUNER_STEP_2, W
+010B   0257           00450     SUBWF   BUFFER_MASK, W
+010C   1C03           00451     BTFSS   STATUS, C
+010D   16D6           00452     BSF TUNING_OUTPUT, POS_TUNE_1_LED
+010E   085A           00453     MOVF TUNER_STEP_3, W
+010F   0257           00454     SUBWF   BUFFER_MASK, W
+0110   1C03           00455     BTFSS   STATUS, C
+0111   1756           00456     BSF TUNING_OUTPUT, POS_TUNE_2_LED
+0112   2???           00457     GOTO END_MAP
+0113                  00458 TUNED
+0113   15D6           00459     BSF TUNING_OUTPUT, IN_TUNE_LED
+0114   2???           00460     GOTO END_MAP
+0115                  00461 END_MAP
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0115   0008           00462     RETURN
                       00463  
                       00464 ;---------------------------------------------------------------------------------------------
                       00465 ;-------------------------FIN SEND_PORT----------------------------------------------------->
                       00466   
                       00467     ;----------->>>>>>>> RUTINA DE INTERRUPCIONES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                       00468     
-0117                  00469 INT
+0116                  00469 INT
                       00470     ; Guardo contexto
-0117   00C2           00471     MOVWF W_CONTEXT     
-0118   0E03           00472     SWAPF STATUS, W  
-0119   01C1           00473     CLRF STATUS_CONTEXT  
-011A   00C1           00474     MOVWF STATUS_CONTEXT
+0116   00C2           00471     MOVWF W_CONTEXT     
+0117   0E03           00472     SWAPF STATUS, W  
+0118   01C1           00473     CLRF STATUS_CONTEXT  
+0119   00C1           00474     MOVWF STATUS_CONTEXT
                       00475 
-011B   1283 1303      00476     BANKSEL PIR1
-011D   1C0C           00477     BTFSS PIR1, TMR1IF
-011E   2???           00478     GOTO CHECK_ZERO_CROSS
-011F   2???           00479     CALL FREQ_CATCHED
-0120   1283 1303      00480     BANKSEL PIR1
-0122   100C           00481     BCF PIR1, 0
+011A   1283 1303      00476     BANKSEL PIR1
+011C   1C0C           00477     BTFSS PIR1, TMR1IF
+011D   2???           00478     GOTO CHECK_ZERO_CROSS
+011E   2???           00479     CALL FREQ_CATCHED
+011F   1283 1303      00480     BANKSEL PIR1
+0121   100C           00481     BCF PIR1, 0
                       00482 
                       00483     ; pusheo contexto
-0123   0E41           00484     SWAPF STATUS_CONTEXT, W 
-0124   0083           00485     MOVWF STATUS         
-0125   0EC2           00486     SWAPF W_CONTEXT, F      
-0126   0E42           00487     SWAPF W_CONTEXT, W      
-0127   0009           00488     RETFIE
+0122   0E41           00484     SWAPF STATUS_CONTEXT, W 
+0123   0083           00485     MOVWF STATUS         
+0124   0EC2           00486     SWAPF W_CONTEXT, F      
+0125   0E42           00487     SWAPF W_CONTEXT, W      
+0126   0009           00488     RETFIE
                       00489   
                       00490     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: FREQ_CATCHED >>>>>>>>>>>>>>>>>>>>>>>>>>>>
                       00491     ;------- Cuando el TMR1 cumple un segundo (teniendo tambien en cuenta
@@ -629,91 +630,106 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00495     ;borra el contenido de <FREQ_H : FREQ_L> para tomar muestras nuevamente en
                       00496     ;un nuevo recuento del TMR1
                       00497     ;---------------------------------------------------------------------------
-0128                  00498 FREQ_CATCHED    
+0127                  00498 FREQ_CATCHED    
                       00499             
-0128   1283 1303      00500     BANKSEL TMR1H
-012A   300B           00501     MOVLW 0x0B
-012B   008F           00502     MOVWF TMR1H
-012C   30DC           00503     MOVLW 0xDC
-012D   008E           00504     MOVWF TMR1L
+0127   1283 1303      00500     BANKSEL TMR1H
+0129   300B           00501     MOVLW 0x0B
+012A   008F           00502     MOVWF TMR1H
+012B   30DC           00503     MOVLW 0xDC
+012C   008E           00504     MOVWF TMR1L
                       00505     
-012E   1283 1303      00506     BANKSEL PORTA
+012D   1283 1303      00506     BANKSEL PORTA
 Message[305]: Using default destination of 1 (file).
-0130   0BA1           00507     DECFSZ CONTA
-0131   0008           00508     RETURN
+012F   0BA1           00507     DECFSZ CONTA
+0130   0008           00508     RETURN
                       00509     
-0132   1283 1303      00510     BANKSEL PORTB
-0134   0822           00511     MOVF    FREQ_L, 0
-0135   00A5           00512     MOVWF FREQ_L_TO_COMPARE
-0136   01A2           00513     CLRF    FREQ_L
-0137   0823           00514     MOVF    FREQ_H, 0
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 12
+0131   1283 1303      00510     BANKSEL PORTB
+0133   0822           00511     MOVF    FREQ_L, 0
+0134   00A5           00512     MOVWF FREQ_L_TO_COMPARE
+0135   01A2           00513     CLRF    FREQ_L
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0138   00A6           00515     MOVWF   FREQ_H_TO_COMPARE
-0139   01A3           00516     CLRF    FREQ_H
-013A   3010           00517     MOVLW .16
-013B   00A1           00518     MOVWF CONTA
+0136   0823           00514     MOVF    FREQ_H, 0
+0137   00A6           00515     MOVWF   FREQ_H_TO_COMPARE
+0138   01A3           00516     CLRF    FREQ_H
+0139   3010           00517     MOVLW .16
+013A   00A1           00518     MOVWF CONTA
                       00519 
-013C   0008           00520     RETURN
+013B   0008           00520     RETURN
                       00521 
                       00522     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: INC_FREQ >>>>>>>>>>>>>>>>>>>>>>>>>>>>
                       00523     ;------- incrementa el par <FREQ_H : FREQ_L>.
                       00524     ;---------------------------------------------------------------------------
-013D                  00525 INC_FREQ
-013D   1283 1303      00526     BANKSEL PORTB
-013F   0AA2           00527     INCF    FREQ_L, F
-0140   1D03           00528     BTFSS   STATUS, Z   ;DESBORDAMIENTO DEL FREQ_L
-0141   0008           00529     RETURN
-0142   0AA3           00530     INCF    FREQ_H, F
-0143   01A2           00531     CLRF    FREQ_L
-0144   0008           00532     RETURN
-                      00533         
-                      00534      ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: CHECK_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                      00535     ;------- La rutina de interrupciones manda a este lugar cuando el comparador
-                      00536     ;detectó un cruce por cero. Como en un periodo de 
-                      00537     ; la onda senoidal existen dos cruces por cero,
-                      00538     ;es necesario contar un unico cruce "cada dos cruces reales" para obtener
-                      00539     ;una señal cuadrada de la misma frecuencia que la senoidal.
-                      00540     ;---------------------------------------------------------------------------
-0145                  00541 CHECK_ZERO_CROSS
-                      00542     
-0145   1283 1303      00543     BANKSEL PIR2
-0147   1E8D           00544     BTFSS PIR2, 5
-0148   0009           00545     RETFIE
-0149   1283 1303      00546     BANKSEL PORTA
+013C                  00525 INC_FREQ
+013C   1283 1303      00526     BANKSEL PORTB
+013E   0AA2           00527     INCF    FREQ_L, F
+013F   1D03           00528     BTFSS   STATUS, Z   ;DESBORDAMIENTO DEL FREQ_L
+0140   0008           00529     RETURN
+0141   0AA3           00530     INCF    FREQ_H, F
+0142   01A2           00531     CLRF    FREQ_L
+0143   0008           00532     RETURN
+                      00533     
+0144                  00534 DELAY
+0144   0BC0           00535     DECFSZ  TIMER_Z_CROSS, F
+0145   2???           00536     GOTO DELAY
+0146   01C0           00537     CLRF TIMER_Z_CROSS
+0147   0008           00538     RETURN
+                      00539      ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: CHECK_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                      00540     ;------- La rutina de interrupciones manda a este lugar cuando el comparador
+                      00541     ;detectó un cruce por cero. Como en un periodo de 
+                      00542     ; la onda senoidal existen dos cruces por cero,
+                      00543     ;es necesario contar un unico cruce "cada dos cruces reales" para obtener
+                      00544     ;una señal cuadrada de la misma frecuencia que la senoidal.
+                      00545     ;---------------------------------------------------------------------------
+                      00546     
+                      00547 
+0148                  00548 CHECK_ZERO_CROSS
+0148   1283 1303      00549     BANKSEL PIR2
+014A   1E8D           00550     BTFSS PIR2, 5
+014B   0009           00551     RETFIE
+014C   1283 1303      00552     BANKSEL PORTB
+014E   0840           00553     MOVF   TIMER_Z_CROSS, W
+014F   3E00           00554     ADDLW   0X00
+0150   1D03           00555     BTFSS   STATUS, Z
+0151   2???           00556     GOTO END_INT_ZERO_CROSS
+0152   1283 1303      00557     BANKSEL PORTB
+0154   30FF           00558     MOVLW   DELAY_Z_CROSS
+0155   00C0           00559     MOVWF   TIMER_Z_CROSS
+0156   2???           00560     CALL DELAY
+0157   1283 1303      00561     BANKSEL PORTA
 Message[305]: Using default destination of 1 (file).
-014B   0BA4           00547     DECFSZ CONTA_Z
-014C   2???           00548     GOTO END_INT_ZERO_CROSS
-014D   1283 1303      00549     BANKSEL PORTB
-014F   3002           00550     MOVLW   0x02
-0150   00A4           00551     MOVWF   CONTA_Z
-0151   2???           00552     CALL INC_FREQ
-0152   2???           00553     GOTO END_INT_ZERO_CROSS
-                      00554     
-                      00555     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: END_INT_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                      00556     ;------- Fin comun para los casos del cruce por cero. Retorna de interrupcion
-                      00557     ;---------------------------------------------------------------------------
-0153                  00558 END_INT_ZERO_CROSS
-0153   1283 1303      00559     BANKSEL PIR2
-0155   128D           00560     BCF PIR2, 5
-0156   0009           00561     RETFIE
-                      00562     
-                      00563 
-                      00564     
-                      00565 ;------------------------------------------------------------------------------------------->
-Warning[205]: Found directive in column 1. (END)
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 13
+0159   0BA4           00562     DECFSZ CONTA_Z
+015A   2???           00563     GOTO END_INT_ZERO_CROSS
+015B   1283 1303      00564     BANKSEL PORTB
+015D   3002           00565     MOVLW   0x02
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-2FF6 3FFF             00566 END
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 14
+015E   00A4           00566     MOVWF   CONTA_Z
+015F   2???           00567     CALL INC_FREQ
+0160   2???           00568     GOTO END_INT_ZERO_CROSS
+                      00569     
+                      00570     ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: END_INT_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                      00571     ;------- Fin comun para los casos del cruce por cero. Retorna de interrupcion
+                      00572     ;---------------------------------------------------------------------------
+0161                  00573 END_INT_ZERO_CROSS
+0161   1283 1303      00574     BANKSEL PIR2
+0163   128D           00575     BCF PIR2, 5
+0164   0009           00576     RETFIE
+                      00577     
+                      00578 
+                      00579     
+                      00580 ;------------------------------------------------------------------------------------------->
+Warning[205]: Found directive in column 1. (END)
+2FF6 3FFF             00581 END
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 14
 
 
 SYMBOL TABLE
@@ -772,7 +788,7 @@ BRG3                              00000003
 BRG4                              00000004
 BRG5                              00000005
 BRG6                              00000006
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 15
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 15
 
 
 SYMBOL TABLE
@@ -831,7 +847,7 @@ CCP2Y                             00000004
 CCPR1                             00000015
 CCPR1H                            00000016
 CCPR1L                            00000015
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 16
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 16
 
 
 SYMBOL TABLE
@@ -840,10 +856,10 @@ SYMBOL TABLE
 CCPR2                             0000001B
 CCPR2H                            0000001C
 CCPR2L                            0000001B
-CHECK_H                           000000BD
-CHECK_L                           000000BA
-CHECK_RESULT                      000000B3
-CHECK_ZERO_CROSS                  00000145
+CHECK_H                           000000BC
+CHECK_L                           000000B9
+CHECK_RESULT                      000000B2
+CHECK_ZERO_CROSS                  00000148
 CHS0                              00000002
 CHS1                              00000003
 CHS2                              00000004
@@ -853,8 +869,8 @@ CKP                               00000004
 CM1CON0                           00000107
 CM2CON0                           00000108
 CM2CON1                           00000109
-COMPARE_HIGH                      000000A5
-COMPRESS_TO_1_BYTE                000000C0
+COMPARE_HIGH                      000000A4
+COMPRESS_TO_1_BYTE                000000BF
 CONTA                             00000021
 CONTA_Z                           00000024
 CREN                              00000004
@@ -866,6 +882,8 @@ DC1B0                             00000004
 DC1B1                             00000005
 DC2B0                             00000004
 DC2B1                             00000005
+DELAY                             00000144
+DELAY_Z_CROSS                     .255
 DIF_FREQ_H                        00000053
 DIF_FREQ_L                        00000052
 D_A                               00000005
@@ -888,22 +906,22 @@ EECON2                            0000018D
 EEDAT                             0000010C
 EEDATA                            0000010C
 EEDATH                            0000010E
-EEIE                              00000004
-EEIF                              00000004
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 17
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 17
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+EEIE                              00000004
+EEIF                              00000004
 EEPGD                             00000007
-END_COMPRESSION                   000000D1
-END_INT_ZERO_CROSS                00000153
-END_MAP                           00000116
-END_SELECTION                     00000093
+END_COMPRESSION                   000000D0
+END_INT_ZERO_CROSS                00000161
+END_MAP                           00000115
+END_SELECTION                     00000092
 F                                 00000001
 FERR                              00000002
-FREQ_CATCHED                      00000128
+FREQ_CATCHED                      00000127
 FREQ_H                            00000023
 FREQ_H_TO_COMPARE                 00000026
 FREQ_L                            00000022
@@ -911,7 +929,7 @@ FREQ_L_TO_COMPARE                 00000025
 FSR                               00000004
 FVREN                             00000000
 GCEN                              00000007
-GET_DEVIATION                     00000094
+GET_DEVIATION                     00000093
 GIE                               00000007
 GO                                00000001
 GO_DONE                           00000001
@@ -925,10 +943,10 @@ I2C_DATA                          00000005
 I2C_READ                          00000002
 I2C_START                         00000003
 I2C_STOP                          00000004
-INC_FREQ                          0000013D
+INC_FREQ                          0000013C
 INDF                              00000000
 INICIO                            00000005
-INT                               00000117
+INT                               00000116
 INTCON                            0000000B
 INTE                              00000004
 INTEDG                            00000006
@@ -947,19 +965,19 @@ IRCF0                             00000004
 IRCF1                             00000005
 IRCF2                             00000006
 IRP                               00000007
-IS_HIGHER_LOWER                   1
-IS_TUNED                          0
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 18
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 18
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+IS_HIGHER_LOWER                   1
+IS_TUNED                          0
 LTS                               00000001
 L_IS_TUNED                        4
 L_SUB_IS_NEGATIVE                 2
-MAIN                              00000060
-MAP                               000000DC
+MAIN                              0000005F
+MAP                               000000DB
 MC1OUT                            00000007
 MC2OUT                            00000006
 MSK                               00000093
@@ -971,9 +989,9 @@ MSK4                              00000004
 MSK5                              00000005
 MSK6                              00000006
 MSK7                              00000007
-NEGATIVE                          000000EA
-NEGATIVE_H                        000000AF
-NEGATIVE_L                        000000A0
+NEGATIVE                          000000E9
+NEGATIVE_H                        000000AE
+NEGATIVE_L                        0000009F
 NEG_TUNE_0_LED                    2
 NEG_TUNE_1_LED                    1
 NEG_TUNE_2_LED                    0
@@ -998,7 +1016,7 @@ OSCTUNE                           00000090
 OSFIE                             00000007
 OSFIF                             00000007
 OSTS                              00000003
-OUT_OF_RANGE                      000000CB
+OUT_OF_RANGE                      000000CA
 P                                 00000004
 P1M0                              00000006
 P1M1                              00000007
@@ -1006,14 +1024,14 @@ PCL                               00000002
 PCLATH                            0000000A
 PCON                              0000008E
 PDC0                              00000000
-PDC1                              00000001
-PDC2                              00000002
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 19
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 19
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PDC1                              00000001
+PDC2                              00000002
 PDC3                              00000003
 PDC4                              00000004
 PDC5                              00000005
@@ -1029,7 +1047,7 @@ PORTB                             00000006
 PORTC                             00000007
 PORTD                             00000008
 PORTE                             00000009
-POSITIVE                          000000FF
+POSITIVE                          000000FE
 POS_TUNE_0_LED                    4
 POS_TUNE_1_LED                    5
 POS_TUNE_2_LED                    6
@@ -1065,14 +1083,14 @@ RB5                               00000005
 RB6                               00000006
 RB7                               00000007
 RBIE                              00000003
-RBIF                              00000000
-RC0                               00000000
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 20
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 20
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+RBIF                              00000000
+RC0                               00000000
 RC1                               00000001
 RC2                               00000002
 RC3                               00000003
@@ -1114,24 +1132,24 @@ S                                 00000003
 SBOREN                            00000004
 SCKP                              00000004
 SCS                               00000000
-SELECT_A                          00000089
-SELECT_B                          0000007A
-SELECT_D                          00000084
-SELECT_E1                         00000075
-SELECT_E2                         0000008E
-SELECT_G                          0000007F
+SELECT_A                          00000088
+SELECT_B                          00000079
+SELECT_D                          00000083
+SELECT_E1                         00000074
+SELECT_E2                         0000008D
+SELECT_G                          0000007E
 SEN                               00000000
 SENDB                             00000003
-SEND_PORT                         000000D4
-SEND_TX                           000000D2
-SMP                               00000007
-SPBRG                             00000099
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 21
+SEND_PORT                         000000D3
+SEND_TX                           000000D1
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 21
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SMP                               00000007
+SPBRG                             00000099
 SPBRGH                            0000009A
 SPEN                              00000007
 SPREAD                            .3
@@ -1155,12 +1173,12 @@ SSPOV                             00000006
 SSPSTAT                           00000094
 STATUS                            00000003
 STATUS_CONTEXT                    00000041
-STEP                              .25
+STEP                              .50
 STRA                              00000000
 STRB                              00000001
 STRC                              00000002
 STRD                              00000003
-STRING_SELECTION                  00000066
+STRING_SELECTION                  00000065
 STRSYNC                           00000004
 SWDTEN                            00000000
 SYNC                              00000004
@@ -1183,14 +1201,14 @@ T2CON                             00000012
 TIMER_Z_CROSS                     00000040
 TMR0                              00000001
 TMR0IE                            00000005
-TMR0IF                            00000002
-TMR1                              0000000E
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 22
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 22
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TMR0IF                            00000002
+TMR1                              0000000E
 TMR1CS                            00000001
 TMR1GE                            00000006
 TMR1H                             0000000F
@@ -1242,14 +1260,14 @@ TRISD4                            00000004
 TRISD5                            00000005
 TRISD6                            00000006
 TRISD7                            00000007
-TRISE                             00000089
-TRISE0                            00000000
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 23
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 23
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TRISE                             00000089
+TRISE0                            00000000
 TRISE1                            00000001
 TRISE2                            00000002
 TRISE3                            00000003
@@ -1259,7 +1277,7 @@ TUN1                              00000001
 TUN2                              00000002
 TUN3                              00000003
 TUN4                              00000004
-TUNED                             00000114
+TUNED                             00000113
 TUNER_STEP                        00000058
 TUNER_STEP_2                      00000059
 TUNER_STEP_3                      0000005A
@@ -1301,14 +1319,14 @@ WDTPS3                            00000004
 WPUB                              00000095
 WPUB0                             00000000
 WPUB1                             00000001
-WPUB2                             00000002
-WPUB3                             00000003
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 24
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 24
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+WPUB2                             00000002
+WPUB3                             00000003
 WPUB4                             00000004
 WPUB5                             00000005
 WPUB6                             00000006
@@ -1360,14 +1378,14 @@ _IDLOC0                           00002000
 _IDLOC1                           00002001
 _IDLOC2                           00002002
 _IDLOC3                           00002003
-_IESO_OFF                         00003BFF
-_IESO_ON                          00003FFF
-MPASM 5.87                          PICS.ASM   6-12-2024  0:34:09         PAGE 25
+MPASM 5.87                          PICS.ASM   6-13-2024  8:49:11         PAGE 25
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_IESO_OFF                         00003BFF
+_IESO_ON                          00003FFF
 _INTOSC                           00003FFD
 _INTOSCIO                         00003FFC
 _INTRC_OSC_CLKOUT                 00003FFD

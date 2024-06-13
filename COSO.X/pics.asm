@@ -75,9 +75,9 @@ LIST P=16F887
 
 ;DEFINICIONES DE VALORES PARA EL MUESTREO POR EL PORTB
 #define SPREAD	.3		    ;si disminuyen aumentan presicion pero disminuyen rango
-#define STEP	.25		    ;el spred es el rango de frecuencias para arriba y para abajo que toma como afinado, sin estar
+#define STEP	.50		    ;el spred es el rango de frecuencias para arriba y para abajo que toma como afinado, sin estar
 				    ; ciertamente afinado
-#define	DELAY_Z_CROSS .2
+#define	DELAY_Z_CROSS .255	    ; delay para la deteccion de cruce por cero
     
     ORG 0x00
     GOTO INICIO
@@ -385,7 +385,7 @@ SEND_TX
 SEND_PORT   
    BANKSEL PORTB
    CALL	MAP 
-   MOVF BUFFER_TO_TX, W
+   MOVF TUNING_OUTPUT, W
    BANKSEL PORTD
    MOVWF    PORTD
    
@@ -530,12 +530,12 @@ INC_FREQ
     INCF    FREQ_H, F
     CLRF    FREQ_L
     RETURN
+    
 DELAY
     DECFSZ  TIMER_Z_CROSS, F
     GOTO DELAY
     CLRF TIMER_Z_CROSS
-    CALL INCF_FREQ
-    GOTO END_INT_ZERO_CROSS
+    RETURN
      ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: CHECK_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;------- La rutina de interrupciones manda a este lugar cuando el comparador
     ;detectó un cruce por cero. Como en un periodo de 
@@ -546,18 +546,24 @@ DELAY
     
 
 CHECK_ZERO_CROSS
+    BANKSEL PIR2
+    BTFSS PIR2, 5
+    RETFIE
     BANKSEL PORTB
     MOVF   TIMER_Z_CROSS, W
     ADDLW   0X00
     BTFSS   STATUS, Z
     GOTO END_INT_ZERO_CROSS
-    BANKSEL PIR2
-    BTFSS PIR2, 5
-    RETFIE
     BANKSEL PORTB
     MOVLW   DELAY_Z_CROSS
     MOVWF   TIMER_Z_CROSS
-    GOTO DELAY
+    CALL DELAY
+    BANKSEL PORTA
+    DECFSZ CONTA_Z
+    GOTO END_INT_ZERO_CROSS
+    BANKSEL PORTB
+    MOVLW   0x02
+    MOVWF   CONTA_Z
     CALL INC_FREQ
     GOTO END_INT_ZERO_CROSS
     
