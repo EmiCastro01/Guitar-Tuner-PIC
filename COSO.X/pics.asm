@@ -8,6 +8,8 @@ LIST P=16F887
     ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< DEFINICIOINES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;-------------------------------------------------------------------------------------------
     TIMER_Z_CROSS   EQU 0x40	    ;CONTADOR PARA HACER RETARDO
+    TIMER_Z_CROSS_COUNTER   EQU 0X5B	;CONTADOR PARA HACER MAS GRANDE EL RETARDO DEPENDIENDO DE LAS FRECUENCIAS SELECCIONADAS
+    BUFFER_TIMER_Z_CROSS_COUNTER    EQU 0X5C	;MISMO CONTADOR PERO QUE PUEDA SER USADO EN INTERRUPCIONES
     STATUS_CONTEXT  EQU 0X41	    ;PARA CONTEXTO (STATUS)
     W_CONTEXT	    EQU	0X42	    ; PARA CONTEXTO (W)
     CONTA_Z EQU 0X24	    ;CONTADOR DE CRUCES POR CERO (SIEMPRE VALE 2: LEER CHECK_ZERO_CROSS)
@@ -75,9 +77,13 @@ LIST P=16F887
 
 ;DEFINICIONES DE VALORES PARA EL MUESTREO POR EL PORTB
 #define SPREAD	.3		    ;si disminuyen aumentan presicion pero disminuyen rango
-#define STEP	.50		    ;el spred es el rango de frecuencias para arriba y para abajo que toma como afinado, sin estar
+#define STEP	.10		    ;el spred es el rango de frecuencias para arriba y para abajo que toma como afinado, sin estar
 				    ; ciertamente afinado
+;DEFINICIONES PARA LA CORRECCION DEL CRUCE POR CERO
 #define	DELAY_Z_CROSS .255	    ; delay para la deteccion de cruce por cero
+#define COUNT_FOR_B_G_D  .4	    ;cuantas veces debo repetir el retardo para este grupo de cuerdas
+#define COUNT_FOR_A_E2  .6	    ;cuantas veces debo repetir el retardo para este grupo de cuerdas
+#define COUNT_FOR_E1	.3 				    
     
     ORG 0x00
     GOTO INICIO
@@ -149,7 +155,7 @@ INICIO
     CLRF FREQ_H
     CLRF FREQ_L_TO_COMPARE
     CLRF FREQ_H_TO_COMPARE
-    MOVLW .16
+    MOVLW .8
     MOVWF CONTA
     CLRF AUX
     BANKSEL TRISD
@@ -224,6 +230,8 @@ STRING_SELECTION
    GOTO END_SELECTION
 
 SELECT_E1
+    MOVLW   COUNT_FOR_E1
+    MOVWF TIMER_Z_CROSS_COUNTER
     MOVF    E1_STR_L, W
     MOVWF   TUNING_STR_L
     MOVF    E1_STR_H, W
@@ -231,6 +239,8 @@ SELECT_E1
     GOTO END_SELECTION
    
 SELECT_B
+    MOVLW   COUNT_FOR_B_G_D
+    MOVWF TIMER_Z_CROSS_COUNTER
     MOVF    B_STR_L, W
     MOVWF   TUNING_STR_L
     MOVF    B_STR_H, W
@@ -238,6 +248,8 @@ SELECT_B
     GOTO END_SELECTION
    
 SELECT_G
+    MOVLW   COUNT_FOR_B_G_D
+    MOVWF TIMER_Z_CROSS_COUNTER
     MOVF    G_STR_L, W
     MOVWF   TUNING_STR_L
     MOVF    G_STR_H, W
@@ -245,6 +257,8 @@ SELECT_G
     GOTO END_SELECTION
    
 SELECT_D
+    MOVLW   COUNT_FOR_B_G_D
+    MOVWF TIMER_Z_CROSS_COUNTER
     MOVF    D_STR_L, W
     MOVWF   TUNING_STR_L
     MOVF    D_STR_H, W
@@ -252,6 +266,8 @@ SELECT_D
     GOTO END_SELECTION
     
 SELECT_A
+    MOVLW   COUNT_FOR_A_E2
+    MOVWF TIMER_Z_CROSS_COUNTER
     MOVF    A_STR_L, W
     MOVWF   TUNING_STR_L
     MOVF    A_STR_H, W
@@ -259,6 +275,8 @@ SELECT_A
     GOTO END_SELECTION
     
 SELECT_E2
+    MOVLW   COUNT_FOR_A_E2
+    MOVWF TIMER_Z_CROSS_COUNTER
     MOVF    E2_STR_L, W
     MOVWF   TUNING_STR_L
     MOVF    E2_STR_H, W
@@ -294,16 +312,18 @@ GET_DEVIATION
     GOTO COMPARE_HIGH
 
     
-
+CHECK1
+    DECF    TUNING_STR_H,F
+    RETURN
 NEGATIVE_L
     BTFSC   TUNING_STR_H, 0
-    GOTO COMPARE_HIGH
+    CALL CHECK1
     MOVF   TUNING_STR_L, W
     SUBWF   FREQ_L_TO_COMPARE, W
     MOVWF   DIF_FREQ_L
+    GOTO COMPARE_HIGH
 
 COMPARE_HIGH
- 
     MOVF FREQ_H_TO_COMPARE, W
     SUBWF TUNING_STR_H, W
     BTFSC STATUS, Z
@@ -321,6 +341,7 @@ NEGATIVE_H
     INCF DIF_FREQ_H, F
     COMF DIF_FREQ_L, F
     INCF DIF_FREQ_L, F
+    GOTO CHECK_RESULT
 
 CHECK_RESULT
     BTFSC TUNING_STATUS_REGISTER, L_IS_TUNED
@@ -514,7 +535,7 @@ FREQ_CATCHED
     MOVF    FREQ_H, 0
     MOVWF   FREQ_H_TO_COMPARE
     CLRF    FREQ_H
-    MOVLW .16
+    MOVLW .8
     MOVWF CONTA
 
     RETURN
@@ -525,17 +546,34 @@ FREQ_CATCHED
 INC_FREQ
     BANKSEL PORTB
     INCF    FREQ_L, F
+    INCF    FREQ_L, F
+
+    
     BTFSS   STATUS, Z	;DESBORDAMIENTO DEL FREQ_L
     RETURN
     INCF    FREQ_H, F
     CLRF    FREQ_L
+    INCF    FREQ_L, F
+    INCF    FREQ_L, F
+ 
     RETURN
     
 DELAY
     DECFSZ  TIMER_Z_CROSS, F
     GOTO DELAY
-    CLRF TIMER_Z_CROSS
+    MOVLW DELAY_Z_CROSS
+    MOVWF TIMER_Z_CROSS
+    GOTO DELAY_COUNT
+    
+DELAY_COUNT
+    DECFSZ  BUFFER_TIMER_Z_CROSS_COUNTER, F
+    GOTO DELAY
+    CLRF    TIMER_Z_CROSS
+    MOVF    TIMER_Z_CROSS_COUNTER, W
+    MOVWF   BUFFER_TIMER_Z_CROSS_COUNTER
     RETURN
+
+    
      ;<<<<<<<<<<<<<<<<<<<<EXPLICACION: CHECK_ZERO_CROSS >>>>>>>>>>>>>>>>>>>>>>>>>>>>
     ;------- La rutina de interrupciones manda a este lugar cuando el comparador
     ;detectó un cruce por cero. Como en un periodo de 
@@ -557,6 +595,8 @@ CHECK_ZERO_CROSS
     BANKSEL PORTB
     MOVLW   DELAY_Z_CROSS
     MOVWF   TIMER_Z_CROSS
+    MOVF TIMER_Z_CROSS_COUNTER, W
+    MOVWF   BUFFER_TIMER_Z_CROSS_COUNTER
     CALL DELAY
     BANKSEL PORTA
     DECFSZ CONTA_Z
@@ -579,3 +619,4 @@ END_INT_ZERO_CROSS
     
 ;------------------------------------------------------------------------------------------->
 END
+
