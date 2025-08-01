@@ -1,0 +1,50 @@
+MPASM 5.87                    INT_MODULE.ASM   6-6-2024  19:18:54         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 
+Error[150]  : Labels must be defined in a code or data section when making an object file
+0000                  00002 INT
+                      00003     
+Error[113]  : Symbol not previously defined (PIR1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00004     BANKSEL PIR1
+Error[113]  : Symbol not previously defined (PIR1)
+Error[113]  : Symbol not previously defined (TMR1IF)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00005     BTFSS PIR1, TMR1IF
+Error[113]  : Symbol not previously defined (CHECK_TMR0)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00006     GOTO CHECK_TMR0
+                      00007     
+Error[113]  : Symbol not previously defined (SEG)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00008     CALL SEG
+Error[113]  : Symbol not previously defined (PIR1)
+Error[152]  : Executable code and data must be defined in an appropriate section
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00009     BANKSEL PIR1
+Error[113]  : Symbol not previously defined (PIR1)
+Error[113]  : Symbol not previously defined (TMR1IF)
+Error[152]  : Executable code and data must be defined in an appropriate section
+0000                  00010     BCF PIR1, TMR1IF
+Error[129]  : Expected (END)
+MPASM 5.87                    INT_MODULE.ASM   6-6-2024  19:18:54         PAGE  2
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+INT                               00000000
+__16F887                          00000001
+__DEBUG                           
+__MPLAB_DEBUGGER_SIMULATOR        1
+
+Errors   :    18
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+
